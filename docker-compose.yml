@@ -5,11 +5,11 @@ services:
     image: mysql:5.7.36
     container_name: "mysql"
     environment:
-        mysql_root_password: root
-        mysql_database: diary-app
-        mysql_user: app
-        mysql_password: secret
-        tz: 'asia/tokyo'
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: diary-app
+        MYSQL_USER: app
+        MYSQL_PASSWORD: secret
+        TZ: 'asia/tokyo'
     # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
     ports:
         - 3306:3306
@@ -51,10 +51,10 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: "phpmyadmin"
     environment:
-      - pma_arbitrary=1 # サーバ設定：サーバーをローカル以外も指定
-      - pma_host=mysql # ホスト設定：container_name: mysqlを指定
-      - pma_user=app # 初期ユーザー設定：appを指定
-      - pma_password=secret # 初期pw設定：secretを指定
+      - PMA_ARBITRARY=1 # サーバ設定：サーバーをローカル以外も指定
+      - PMA_HOST=mysql # ホスト設定：container_name: mysqlを指定
+      - PMA_USER=app # 初期ユーザー設定：appを指定
+      - PMA_PASSWORD=secret # 初期pw設定：secretを指定
     # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
     ports:
       - 8080:80
