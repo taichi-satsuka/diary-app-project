@@ -1,0 +1,83 @@
+version: '3'
+services:
+  db:
+    platform: linux/amd64
+    image: mysql:5.7.36
+    container_name: "mysql"
+    environment:
+        mysql_root_password: root
+        mysql_database: diary-app
+        mysql_user: app
+        mysql_password: secret
+        tz: 'asia/tokyo'
+    # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
+    ports:
+        - 3306:3306
+    # コマンドの指定
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    # 名前付きボリュームを設定する（名前付きボリューム:コンテナ側ボリュームの場所）
+    volumes:
+      - db_data_test:/var/lib/mysql
+      - db_my.cnf_test:/etc/mysql/conf.d/my.cnf
+      - db_sql_test:/docker-entrypoint-initdb.d
+
+  php:
+    platform: linux/amd64
+    build: ./docker/php
+    container_name: "php-fpm"
+    # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
+    volumes:
+      - ./backend:/var/www/backend
+    working_dir: /var/www/backend
+
+  nginx:
+    image: nginx:latest
+    container_name: "nginx"
+    # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
+    ports:
+      - 80:80
+    # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
+    volumes:
+      - ./backend:/var/www/backend
+      - ./frontend:/var/www/frontend
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    # サービスの依存関係を指定（nginxをphpに依存させる）
+    depends_on:
+      - php
+      - node
+
+  phpmyadmin:
+    platform: linux/amd64
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: "phpmyadmin"
+    environment:
+      - pma_arbitrary=1 # サーバ設定：サーバーをローカル以外も指定
+      - pma_host=mysql # ホスト設定：container_name: mysqlを指定
+      - pma_user=app # 初期ユーザー設定：appを指定
+      - pma_password=secret # 初期pw設定：secretを指定
+    # ポートフォワードの指定（ホスト側ポート：コンテナ側ポート）
+    ports:
+      - 8080:80
+    # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+    depends_on:
+      - db
+
+  node:
+    image: node:20-alpine
+    container_name: "nuxt-app"
+    # コンテナ内の標準出力とホストの出力を設定：trueを指定
+    tty: true
+    # ボリュームを設定する（ホスト側ディレクトリ:コンテナ側ボリュームの場所）
+    volumes:
+      - ./frontend:/var/www/frontend
+    # コンテナ起動後のカレントディレクトリを設定
+    working_dir: /var/www/frontend
+
+
+# サービスレベルで名前付きボリュームを命名する
+volumes:
+  db_data_test:
+  db_my.cnf_test:
+  db_sql_test:
