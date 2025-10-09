@@ -1,19 +1,17 @@
-<template>
-    <h1>Hello world</h1>
-</template>
-
 <script>
 import { request, gql } from 'graphql-request'
 
+const endpoint = "http://localhost/graphql"
+
 const query = gql`
-  {
-    user(id: 2) {
-        id
-        name
-        email
+    {
+        user(id: 2) {
+            id
+            name
+            email
+        }
     }
-  }
 `
 
-request('http://localhost/graphql', query).then((data) => console.log(data))
+request(endpoint, query).then((data) => console.log(data))
 </script>
