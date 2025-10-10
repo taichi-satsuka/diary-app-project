@@ -77,7 +77,7 @@ input UpdateMeInput {
 type UpdateMePayload {
     success: Boolean!
     message: String!
-    user: User!
+    user: User
 }
 
 type Query {
@@ -105,8 +105,12 @@ type Query {
 type Mutation {
     register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Register")
     login(input: LoginInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Login")
-    logout: AuthPayload! @guard @field(resolver: "App\\GraphQL\\Mutations\\Logout")
+}
 
-    updateMe(input: UpdateMeInput!): UpdateMePayload! @guard @field(resolver: "App\\GraphQL\\Mutations\\UpdateMe")
+extend type Mutation @guard {
+    logout: AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Logout")
+
+    updateMe(input: UpdateMeInput!): UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\UpdateMe")
+    deleteMe: UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\DeleteMe")
 }
 
