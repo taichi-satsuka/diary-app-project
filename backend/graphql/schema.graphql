@@ -93,5 +93,6 @@ type AuthPayload {
 type Mutation {
     register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Register")
     login(input: LoginInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Login")
+    logout: AuthPayload! @guard @field(resolver: "App\\GraphQL\\Mutations\\Logout")
 }
 
