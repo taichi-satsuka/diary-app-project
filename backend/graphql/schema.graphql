@@ -68,7 +68,8 @@ type Query {
 
     
     post (id: ID @eq): Post @find
-    
+
+    me: User @auth
 }
 
 input RegisterInput {
