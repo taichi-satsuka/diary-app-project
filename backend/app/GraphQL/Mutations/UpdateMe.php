@@ -24,6 +24,7 @@ final readonly class UpdateMe
         }
 
         if ($updated) {
+            $user->updated_at = now();
             $user->save();
 
             return [
