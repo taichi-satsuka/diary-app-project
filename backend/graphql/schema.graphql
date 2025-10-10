@@ -71,3 +71,21 @@ type Query {
     
 }
 
+input RegisterInput {
+    name: String!
+    email: String!
+    password: String!
+    password_confirmation: String!
+}
+
+type AuthPayload {
+    success: Boolean!
+    message: String!
+    user: User
+    token: String
+}
+
+type Mutation {
+    register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Register")
+}
+
