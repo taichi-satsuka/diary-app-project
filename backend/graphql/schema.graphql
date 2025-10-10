@@ -78,6 +78,11 @@ input RegisterInput {
     password_confirmation: String!
 }
 
+input LoginInput {
+    email: String!
+    password: String!
+}
+
 type AuthPayload {
     success: Boolean!
     message: String!
@@ -87,5 +92,6 @@ type AuthPayload {
 
 type Mutation {
     register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Register")
+    login(input: LoginInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Login")
 }
 
