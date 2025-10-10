@@ -11,6 +11,13 @@ final readonly class Logout
     {
         $user = auth()->user();
 
+        if (!$user) {
+            return (new AuthResponse(
+                success: false,
+                message: "Unauthenticated."
+            ));
+        }
+
         // 現在のアクセストークンを削除
         $user->currentAccessToken()->delete();
 
