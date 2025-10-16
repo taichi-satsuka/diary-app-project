@@ -14,6 +14,15 @@ final readonly class ToggleFollow
         $followed_id = $args['followed_id'];
         $user = auth()->user();
 
+        // 自己フォローを防ぐ
+        // graphqlは引数をstringで受け取る→ intでキャスト
+        if ((int)$followed_id === $user->id) {
+            return (new Response(
+                success: false,
+                message: "You can't folllow yourself."
+            ))->toArray();
+        }
+
         try {
             $follow = Follow::where('follower_id', $user->id)->where('followed_id', $followed_id)->first();
 
@@ -24,7 +33,7 @@ final readonly class ToggleFollow
 
                 return (new Response(
                     success: true,
-                    message: "Unfollow ths post",
+                    message: "Unfollowed the user",
                 ))->toarray();
             } else {
                 $follow = Follow::create([
@@ -34,7 +43,7 @@ final readonly class ToggleFollow
 
                 return (new Response(
                     success: true,
-                    message: "Followd the post",
+                    message: "Followed the user"
                 ))->toarray();
             }
         } catch (Exception $e) {
