@@ -2,6 +2,9 @@
 
 namespace App\GraphQL\Mutations\User;
 
+use App\GraphQL\Response;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
+
 final readonly class DeleteMe
 {
     /** @param  array{}  $args */
@@ -11,15 +14,15 @@ final readonly class DeleteMe
 
         try {
             $user->delete();
-            return [
-                'success' => true,
-                'message' => "Your account deleted successfully."
-            ];
+            return (new Response(
+                success: true,
+                message: "Your account was deleted successfully."
+            ));
         } catch(\Exception $e) {
-            return [
-                'success' => false,
-                'message' => "Failed to delete your account",
-            ];
+            return (new Response(
+                success: true,
+                message: "Failed to delete your account"
+            ));
         }
     }
 }

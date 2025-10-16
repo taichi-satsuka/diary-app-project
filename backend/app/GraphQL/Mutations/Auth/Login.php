@@ -3,7 +3,7 @@
 namespace App\GraphQL\Mutations\Auth;
 
 use App\Models\User;
-use App\GraphQL\Responses\AuthResponse;
+use App\GraphQL\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,29 +20,39 @@ final readonly class Login
         ]);
 
         if ($validator->fails()) {
-            return (new AuthResponse(
+            return (new Response(
                 success: false,
-                message: $validator->errors()->first()
+                message: $validator->errors()->first(),
+                data: [
+                    'user' => null,
+                    'token' => null
+                ]
             ))->toArray();
         }
 
         $user = User::where('email', $input['email'])->first();
 
         if (!$user || !Hash::check($input['password'], $user->password)) {
-            return (new AuthResponse(
+            return (new Response(
                 success: false,
-                message: "Invalid email or password."
+                message: "Invalid email or password.",
+                data: [
+                    'user' => null,
+                    'token' => null,
+                ]
             ))->toArray();
         }
 
         // パーソナルアクセストークン発行
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return (new AuthResponse(
+        return (new Response(
             success: true,
             message: "Login successful.",
-            user: $user,
-            token: $token
+            data: [
+                'user'=> $user,
+                'token' => $token
+            ]
         ))->toArray();
     }
 }

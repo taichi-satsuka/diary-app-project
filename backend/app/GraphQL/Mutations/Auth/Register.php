@@ -5,7 +5,7 @@ namespace App\GraphQL\Mutations\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\GraphQL\Responses\AuthResponse;
+use App\GraphQL\Response;
 
 final readonly class Register
 {
@@ -25,9 +25,12 @@ final readonly class Register
 
         if ($validator->fails()) {
             # returnで直接インスタンス化してメソッドにアクセスするときインスタンスを（）で括らないと -> をうまく認識しないでエラーになる
-            return (new AuthResponse(
+            return (new Response(
                 success: false,
-                message: $validator->errors()->first()
+                message: $validator->errors()->first(),
+                data: [
+                    'user' => null
+                ]
             ))->toArray();
         }
 
@@ -38,16 +41,21 @@ final readonly class Register
                 'password' => Hash::make($input['password']),
             ]);
         } catch (\Exception $e) {
-            return (new AuthResponse(
+            return (new Response(
                 success: false,
-                message: "Failed to register user."
+                message: "Failed to register user.",
+                data: [
+                    'user' => null
+                ]
             ))->toArray();
         }
 
-        return (new AuthResponse(
+        return (new Response(
             success: true,
             message: "Registration successful.",
-            user: $user
+            data: [
+                'user' => $user
+            ]
         ))->toArray();
     }
 }

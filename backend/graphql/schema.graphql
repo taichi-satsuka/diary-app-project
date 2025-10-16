@@ -1,8 +1,8 @@
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 enum Visibility {
-    public
-    followers
+    PUBLIC
+    FOLLOWERS
 }
 
 type User {
@@ -78,6 +78,12 @@ type UpdateMePayload {
     success: Boolean!
     message: String!
     user: User
+}
+
+input createPostInput {
+    title: string!
+    content: string!
+    visibility: Visibility!
 }
 
 type Query {

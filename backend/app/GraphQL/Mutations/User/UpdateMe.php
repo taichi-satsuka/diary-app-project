@@ -3,6 +3,7 @@
 namespace App\GraphQL\Mutations\User;
 
 use Illuminate\Support\facades\Auth;
+use App\GraphQL\Response;
 
 final readonly class UpdateMe
 {
@@ -27,17 +28,21 @@ final readonly class UpdateMe
             $user->updated_at = now();
             $user->save();
 
-            return [
-                'success' => true,
-                'message' => "Your profile was updated.",
-                'user' => $user,
-            ];
+            return (new Response(
+                success: true,
+                message: "Your profile was updated.",
+                data: [
+                    'user' => $user,
+                ]
+            ));
         }
 
-        return [
-            'success' => false,
-            'message' => "Nothing was updated",
-            'user' => null,
-        ];
+        return (new Response(
+            success: true,
+            message: "Notning was updated.",
+            data: [
+                'user' => $user,
+            ]
+        ));
     }
 }

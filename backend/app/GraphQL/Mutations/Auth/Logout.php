@@ -2,7 +2,7 @@
 
 namespace App\GraphQL\Mutations\Auth;
 
-use App\GraphQL\Responses\AuthResponse;
+use App\GraphQL\Response;
 
 final readonly class Logout
 {
@@ -12,18 +12,26 @@ final readonly class Logout
         $user = auth()->user();
 
         if (!$user) {
-            return (new AuthResponse(
+            return (new Response(
                 success: false,
-                message: "Unauthenticated."
+                message: "Unauthenticated.",
+                data: [
+                    'user' => null,
+                    'token' => null,
+                ]
             ))->toArray();
         }
 
         // 現在のアクセストークンを削除
         $user->currentAccessToken()->delete();
 
-        return (new AuthResponse(
+        return (new Response(
             success: true,
-            message: 'Logout successful.'
+            message: 'Logout successful.',
+            data: [
+                'user' => $user,
+                'token' => null
+            ]
         ))->toArray();
     }
 }
