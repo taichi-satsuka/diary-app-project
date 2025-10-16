@@ -34,7 +34,7 @@ final readonly class UpdateMe
                 data: [
                     'user' => $user,
                 ]
-            ));
+            ))->toArray();
         }
 
         return (new Response(
@@ -43,6 +43,6 @@ final readonly class UpdateMe
             data: [
                 'user' => $user,
             ]
-        ));
+        ))->toArray();
     }
 }
