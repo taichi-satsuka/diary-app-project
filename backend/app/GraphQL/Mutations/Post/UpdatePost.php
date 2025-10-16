@@ -2,7 +2,6 @@
 
 namespace App\GraphQL\Mutations\Post;
 
-use Illuminate\Support\Facades\Validator;
 use App\Models\Post;
 use App\GraphQL\Response;
 use Exception;
@@ -49,9 +48,7 @@ final readonly class UpdatePost
             }
             
             if ($updated) {
-                $post->updated_at = now();
                 $post->save();
-
                 return (new Response(
                     success: true,
                     message: "Your post was updated.",
@@ -60,19 +57,20 @@ final readonly class UpdatePost
                     ]
                 ))->toArray();
             }
+
+            return (new Response(
+                success: true,
+                message: "Nothing was updated.",
+                data: [
+                    'post' => $post,
+                ]
+            ))->toArray();
         } catch(Exception $e) {
             return (new Response(
                 success: false,
                 message: "unexpected error was occurred."
-            ));
+            ))->toArray();
         }
 
-        return (new Response(
-            success: true,
-            message: "Notning was updated.",
-            data: [
-                'post' => $post,
-            ]
-        ))->toArray();
     }
 }

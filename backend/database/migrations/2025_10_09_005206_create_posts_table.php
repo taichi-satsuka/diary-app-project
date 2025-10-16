@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId("user_id")->constrained("users")->onDelete("cascade");
             $table->string("title");
             $table->text("content");
-            $table->enum("visibility", ['public', 'followers'])->default('public');
+            $table->enum("visibility", ['PUBLIC', 'FOLLOWERS'])->default('PUBLIC');
             $table->timestamps();
         });
     }
