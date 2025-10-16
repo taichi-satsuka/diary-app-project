@@ -104,6 +104,11 @@ input UpdatePostInput {
     visibility: Visibility
 }
 
+type LikePayload implements Payload {
+    success: Boolean!
+    message: String!
+}
+
 type Query {
     "Find a single user by an identifying attribute."
     user(
@@ -124,7 +129,7 @@ type Query {
 }
 
 extend type Query @guard {
-    me: User
+    me: User @auth
     post (id: ID @eq): Post @find
 }
 
@@ -143,6 +148,6 @@ extend type Mutation @guard {
     updatePost(input: UpdatePostInput!): PostPayload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\UpdatePost")
     deletePost(post_id: ID!): PostPayload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\DeletePost")
 
-    toggleLike(post_id: ID!): Payload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\ToggleLike")
+    toggleLike(post_id: ID!): LikePayload! @field(resolver: "App\\GraphQL\\Mutations\\Like\\ToggleLike")
 }
 
