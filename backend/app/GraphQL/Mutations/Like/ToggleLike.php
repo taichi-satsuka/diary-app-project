@@ -3,7 +3,6 @@
 namespace App\GraphQL\Mutations\Like;
 
 use App\Models\Like;
-use Illuminate\Support\Facades\Validator;
 use App\GraphQL\Response;
 use Exception;
 
@@ -41,7 +40,7 @@ final readonly class ToggleLike
         } catch (Exception $e) {
             return (new Response(
                 success: false,
-                message: "Unexpected error was occurred. $e",
+                message: "Unexpected error was occurred.",
             ))->toArray();
         }
     }
