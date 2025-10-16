@@ -50,6 +50,11 @@ type Comment {
     post: Post! @belongsTo
 }
 
+interface Payload {
+    success: Boolean!,
+    message: String!
+}
+
 input RegisterInput {
     name: String!
     email: String!
@@ -62,7 +67,7 @@ input LoginInput {
     password: String!
 }
 
-type AuthPayload {
+type AuthPayload implements Payload {
     success: Boolean!
     message: String!
     user: User
@@ -74,16 +79,29 @@ input UpdateMeInput {
     profile_image_url: String
 }
 
-type UpdateMePayload {
+type UpdateMePayload implements Payload {
     success: Boolean!
     message: String!
     user: User
 }
 
-input createPostInput {
-    title: string!
-    content: string!
+type PostPayload implements Payload {
+    success: Boolean!
+    message: String!
+    post: Post
+}
+
+input CreatePostInput {
+    title: String!
+    content: String!
     visibility: Visibility!
+}
+
+input UpdatePostInput {
+    id: ID!
+    title: String
+    content: String
+    visibility: Visibility
 }
 
 type Query {
@@ -103,9 +121,11 @@ type Query {
     ): [User!]! @paginate(defaultCount: 10)
 
     
-    post (id: ID @eq): Post @find
+}
 
-    me: User @auth
+extend type Query @guard {
+    me: User
+    post (id: ID @eq): Post @find
 }
 
 type Mutation {
@@ -118,6 +138,11 @@ extend type Mutation @guard {
 
     updateMe(input: UpdateMeInput!): UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\User\\UpdateMe")
     deleteMe: UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\User\\DeleteMe")
+    
+    createPost(input: CreatePostInput!): PostPayload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\CreatePost")
+    updatePost(input: UpdatePostInput!): PostPayload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\UpdatePost")
+    deletePost(post_id: ID!): PostPayload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\DeletePost")
 
+    toggleLike(post_id: ID!): Payload! @field(resolver: "App\\GraphQL\\Mutations\\Post\\ToggleLike")
 }
 
