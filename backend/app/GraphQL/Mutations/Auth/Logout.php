@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\GraphQL\Mutations;
+namespace App\GraphQL\Mutations\Auth;
 
 use App\GraphQL\Responses\AuthResponse;
 
@@ -15,7 +15,7 @@ final readonly class Logout
             return (new AuthResponse(
                 success: false,
                 message: "Unauthenticated."
-            ));
+            ))->toArray();
         }
 
         // 現在のアクセストークンを削除
@@ -24,6 +24,6 @@ final readonly class Logout
         return (new AuthResponse(
             success: true,
             message: 'Logout successful.'
-        ));
+        ))->toArray();
     }
 }

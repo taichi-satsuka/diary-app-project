@@ -103,14 +103,15 @@ type Query {
 }
 
 type Mutation {
-    register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Register")
-    login(input: LoginInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Login")
+    register(input: RegisterInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\Register")
+    login(input: LoginInput!): AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\Login")
 }
 
 extend type Mutation @guard {
-    logout: AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Logout")
+    logout: AuthPayload! @field(resolver: "App\\GraphQL\\Mutations\\Auth\\Logout")
 
-    updateMe(input: UpdateMeInput!): UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\UpdateMe")
-    deleteMe: UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\DeleteMe")
+    updateMe(input: UpdateMeInput!): UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\User\\UpdateMe")
+    deleteMe: UpdateMePayload! @field(resolver: "App\\GraphQL\\Mutations\\User\\DeleteMe")
+
 }
 
