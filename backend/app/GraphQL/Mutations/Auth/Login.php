@@ -4,8 +4,10 @@ namespace App\GraphQL\Mutations\Auth;
 
 use App\Models\User;
 use App\GraphQL\Response;
+use Faker\Provider\ar_EG\Person;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
 
 final readonly class Login
 {
@@ -32,6 +34,7 @@ final readonly class Login
 
         $user = User::where('email', $input['email'])->first();
 
+        // accountが存在しない、または、passwordが違う
         if (!$user || !Hash::check($input['password'], $user->password)) {
             return (new Response(
                 success: false,
@@ -41,6 +44,18 @@ final readonly class Login
                     'token' => null,
                 ]
             ))->toArray();
+        }
+
+        // ログイン中はトークンを発行しない（二重ログインを防ぐ）
+        if (PersonalAccessToken::where('tokenable_id', $user->id)) {
+            return (new Response(
+                success: false,
+                message: "You already have logined.",
+                data: [
+                    'user' => null,
+                    'token' => null,
+                ]
+                ));
         }
 
         // パーソナルアクセストークン発行
