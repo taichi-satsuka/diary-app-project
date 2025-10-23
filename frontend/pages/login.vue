@@ -25,10 +25,10 @@
                     />
                 </div>
                 <div>
-                    <button type="button" class="px-4 py-2 mt-2 w-full text-center rounded-md bg-teal-500 shadow-md text-white hover:bg-teal-600 hover:shadow-lg font-semibold transition">Sign in</button>
+                    <button type="submit" class="px-4 py-2 mt-2 w-full text-center rounded-md bg-teal-500 shadow-md text-white hover:bg-teal-600 hover:shadow-lg font-semibold transition">Sign in</button>
                 </div>
             </form>
-            <p class="text-gray-500 text-sm text-center mt-6">Don't have an account yet?   <NuxtLink to="/signup" class="text-teal-500 hover:text-teal-600 hover:underline">Sign up</NuxtLink></p>
+            <p class="text-gray-500 text-sm text-center mt-6">Don't have an account yet?   <NuxtLink to="/register" class="text-teal-500 hover:text-teal-600 hover:underline">Sign up</NuxtLink></p>
             
         </div>
     </div>
