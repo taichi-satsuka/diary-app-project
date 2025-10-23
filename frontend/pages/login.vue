@@ -14,15 +14,16 @@
                         required
                     />
                 </div>
-                <div>
+                <div class="relative">
                     <label for="password" class="block text-sm mb-1">password</label>
                     <input
-                        type="password"
+                        :type = "showPassword ? 'text' : 'password'"
                         name="password"
                         id="password"
-                        placeholder="password"
-                        class="px-4 py-3 bg-gray-100 border border-gray-300 rounded-md shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
+                        placeholder="••••••••"
+                        class="pl-4 pr-10 py-3 bg-gray-100 border border-gray-300 rounded-md shadow-sm w-full focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
                     />
+                   <PasswordToggle :show="showPassword" @toggle="showPassword = !showPassword" class="absolute right-3 top-1/2"/> 
                 </div>
                 <div>
                     <button type="submit" class="px-4 py-2 mt-2 w-full text-center rounded-md bg-teal-500 shadow-md text-white hover:bg-teal-600 hover:shadow-lg font-semibold transition">Sign in</button>
@@ -33,3 +34,7 @@
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+const showPassword = ref<boolean>(false)
+</script>
