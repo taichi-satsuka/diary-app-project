@@ -5,3 +5,11 @@ export type RegisterResponse = {
         message: string,
     }
 }
+
+export type LoginResponse = {
+    login: {
+        success: boolean,
+        message: string,
+        token?: string
+    }
+}

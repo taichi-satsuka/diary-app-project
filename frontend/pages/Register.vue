@@ -87,7 +87,6 @@ const form = reactive({
 
 const onRegister = async () => {
     const { gqlRequest }= useGqlClient()
-    const query = REGISTER_MUTATION
     const variables = {
         input: form
     }
@@ -96,7 +95,7 @@ const onRegister = async () => {
     error.value = ''
 
     try {
-        const response = await gqlRequest<RegisterResponse>(query, variables)
+        const response = await gqlRequest<RegisterResponse>(REGISTER_MUTATION, variables)
 
         if (response.register.success) {
             successMessage.value = response.register.message
