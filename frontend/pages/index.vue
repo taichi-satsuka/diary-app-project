@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full flex justify-center ">
+    <div class="flex justify-center ">
         <aside class="w-1/5 mr-2 bg-white/70 flex flex-col">
             <h1 class="text-3xl font-extrabold text-center text-teal-700 mt-4 mb-6 tracking-wide">Home</h1>
 

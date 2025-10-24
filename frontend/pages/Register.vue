@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen flex justify-center items-center bg-gradient-to-br from-emerald-100 to-emerald-300">
+    <div class="mainBox flex justify-center items-center bg-gradient-to-br from-emerald-100 to-emerald-300">
         <div class="rounded-2xl bg-white w-full max-w-md p-8 shadow-2xl">
             <h2 class="text-2xl text-center text-gray-700 mb-6 font-bold">Create your account</h2>
 
