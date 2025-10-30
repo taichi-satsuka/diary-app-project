@@ -21,3 +21,14 @@ export type MeResponse = {
         email: string
     }
 }
+
+export type UserResponse = {
+    user : {
+        id: number,
+        name: string,
+        email: string | null,
+        bio: string | null,
+        profile_image_url: string | null,
+        created_at: string,
+    }
+}

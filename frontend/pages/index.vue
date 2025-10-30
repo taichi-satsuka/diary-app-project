@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import type { MeResponse } from '~/graphql/types/response';
 import type { Post } from '~/types/type';
-import { ME } from '~/graphql/queries/me';
+import { ME } from '~/graphql/queries/user';
 
 const { gqlRequest } = useGqlClient()
 const { me, setMe } = useMe()
