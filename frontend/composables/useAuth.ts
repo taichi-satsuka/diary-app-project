@@ -7,6 +7,7 @@ export const useAuth = () => {
     const deleteToken = () => {
         token.value = null
     }
+    const isAuthenticated = () => !!token.value
 
-    return { token, setToken, deleteToken }
+    return { token, setToken, deleteToken, isAuthenticated }
 }
