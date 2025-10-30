@@ -13,3 +13,11 @@ export type LoginResponse = {
         token?: string
     }
 }
+
+export type MeResponse = {
+    me: {
+        id: number,
+        name: string,
+        email: string
+    }
+}

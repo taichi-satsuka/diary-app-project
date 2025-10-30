@@ -7,3 +7,9 @@ export type Post = {
     content: string,
     created_at: string
 }
+
+export type LoginUser = {
+    id: number,
+    name: string,
+    email: string,
+}

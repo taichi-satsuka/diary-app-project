@@ -12,8 +12,8 @@ export function useGqlClient() {
         query: string,
         variables?: any,
     ): Promise<T> {
-        const headers = token
-        ? { Authorization: `Bearer ${token}`}
+        const headers = token.value
+        ? { Authorization: `Bearer ${token.value}`}
         : undefined
     
         return $client.request<T>(query, variables, headers)
