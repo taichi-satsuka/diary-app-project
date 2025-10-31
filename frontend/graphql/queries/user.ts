@@ -14,11 +14,13 @@ export const ME = gql`
             followings {
                 id
                 name
+                email
                 profile_image_url
             }
             followers {
                 id
                 name
+                email
                 profile_image_url
             }
             likedPosts {
@@ -39,6 +41,28 @@ export const USERDETAIL = gql`
             bio
             profile_image_url
             created_at
+            posts {
+                id
+                title
+                content
+            }
+            followings {
+                id
+                name
+                email
+                profile_image_url
+            }
+            followers {
+                id
+                name
+                email
+                profile_image_url
+            }
+            likedPosts {
+                id
+                title
+                content
+            }
         }
     }
 `

@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LoginUser } from '~/types/type';
+import type { UserSummary } from '~/graphql/types/response';
 
-defineProps<{user: LoginUser | null}>()
+defineProps<{user?: UserSummary | null}>()
 </script>

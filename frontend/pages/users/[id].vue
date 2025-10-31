@@ -15,14 +15,27 @@
                     <p class="text-gray-400 text-sm">Joined: {{ userData!.created_at }}</p>
                 </div>
 
+                    <div class="absolute bottom-0 right-0 flex gap-2">
+                        <div class="flex flex-col items-center hover:bg-gray-200 transition"
+                        @click="isFollowedModal=true">
+                            <span class="font-bold">{{ userData!.followers?.length || 0 }}</span>
+                            <span class="text-gray-500 text-sm">Followers</span>
+                        </div>
+                        <div class="flex flex-col items-center hover:bg-gray-200 transition"
+                        @click="isFollowingModal=true">
+                            <span class="font-bold">{{ userData!.followings?.length || 0 }}</span>
+                            <span class="text-gray-500 text-sm">Following</span>
+                        </div>
+                    </div>
+
                 <!-- 編集ボタン（ログイン中ユーザーのみ表示） -->
-                <button v-if="Number(id) == me!.id" type="button" class="absolute top-0 right-0 text-md text-white bg-teal-400 hover:bg-teal-500 p-1 rounded-md shadow-lg w-20">edit</button>
+                <button v-if="Number(id) == me!.id" type="button" class="absolute top-0 right-0 text-sm text-white bg-teal-400 hover:bg-teal-500 p-1 rounded-md shadow-lg w-20">edit</button>
 
                 <!-- ✅ フォロー／アンフォローボタン（本人以外に表示） -->
                 <button
                     v-else
                     @click="toggleFollow"
-                    class="absolute top-0 right-0 text-md text-white p-1 rounded-md shadow-lg w-24 transition"
+                    class="absolute top-0 right-0 text-sm text-white p-1 rounded-md shadow-lg w-24 transition"
                     :class="isFollowing ? 'bg-gray-400 hover:bg-gray-500' : 'bg-teal-400 hover:bg-teal-500'"
                 >
                     {{ isFollowing ? 'Unfollow' : 'Follow' }}
@@ -49,6 +62,16 @@
         </div>
     </div>
     <Loading v-else class="mainBox flex justify-center items-center"/>
+    <FollowModal
+        v-if="isFollowingModal"
+        :userSummaries="userData!.followings!"
+        @close="isFollowingModal=false"
+    />
+    <FollowModal
+        v-if="isFollowedModal"
+        :userSummaries="userData!.followers!"
+        @close="isFollowedModal=false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -68,6 +91,8 @@ const isFollowing = ref<boolean>(false)
 const MyfollowingUsers = ref<UserSummary[]>(
     me.value?.followings ?? []
 );
+const isFollowingModal = ref<boolean>(false)
+const isFollowedModal = ref<boolean>(false)
 
 const fetchUserData = async () => {
     try {
@@ -86,8 +111,23 @@ const toggleFollow = async () => {
     try {
         const variables = {followed_id: id}
         const toggleFollowResponse = await gqlRequest<ToggleFollowResponse>(TOGGLEFOLLOW, variables)
+        
+        const userSummary: UserSummary = {
+            id: me.value!.id,
+            name: me.value!.name,
+            email: me.value!.email,
+            profile_image_url: me.value!.profile_image_url
+        }
 
         isFollowing.value = !isFollowing.value 
+
+        if (isFollowing.value) {
+            if (!userData.value!.followers) userData.value!.followers = []
+
+            userData.value!.followers?.push(userSummary)
+        } else {
+            userData.value!.followers = userData.value?.followers?.filter(user => user.id !== userSummary.id)
+        }
     } catch (e) {
         console.error("error:", e)
     }
@@ -101,14 +141,6 @@ onMounted(async () => {
     await fetchUserData()
 
 })
-
-watchEffect(() => {
-
-    if (userData.value && MyfollowingUsers.value){
-    }
-})
-
-
 
 const posts: Post[] = [
      {

@@ -25,7 +25,7 @@ export type UserResponse = {
     user : {
         id: number,
         name: string,
-        email: string | null,
+        email: string,
         bio: string | null,
         profile_image_url: string | null,
         created_at: string,
@@ -56,5 +56,6 @@ export type Comment = {
 export type UserSummary = {
   id: number;
   name: string;
+  email: string;
   profile_image_url: string | null;
 };
