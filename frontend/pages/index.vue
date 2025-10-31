@@ -3,7 +3,7 @@
             <aside class="w-1/5 mr-2 flex flex-col">
                 <h1 class="text-3xl font-extrabold text-center text-teal-700 mt-4 mb-6 tracking-wide">Home</h1>
 
-                <UserBox :user='me' class="mb-2"/>
+                <UserBox :user='{id:me?.id!, name: me?.name!, email:me?.email!}' class="mb-2"/>
 
                 <button
                 class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition"

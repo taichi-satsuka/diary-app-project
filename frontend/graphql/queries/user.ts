@@ -6,6 +6,26 @@ export const ME = gql`
             id
             name
             email
+            posts {
+                id
+                title
+                content
+            }
+            followings {
+                id
+                name
+                profile_image_url
+            }
+            followers {
+                id
+                name
+                profile_image_url
+            }
+            likedPosts {
+                id
+                title
+                content
+            }
         }
     }
 `
