@@ -17,27 +17,27 @@
                     <button class="flex-1 font-bold border-l-2 border-teal-400 hover:underline hover:text-gray-700 transition">Like</button>
                 </div>
                 <PostCard 
-                    v-for="post in posts"
-                    :key="post.id"
-                    :post="post"
+                    v-if="posts"
+                    v-for="postSummary in posts"
+                    :key="postSummary.id"
+                    :postSummary
                 />
+                <Loading v-else class="mainBox flex justify-center items-center"/>
             </div>
         </div>
         <PostModal v-if="showModal" :manipulateType="`Create`" @close="showModal=false"/>
 </template>
 
 <script setup lang="ts">
-import type { MeResponse } from '~/graphql/types/response';
-import type { Post } from '~/types/type';
+import { type PostsResponse, type MeResponse, type PostSummary } from '~/graphql/types/response';
 import { ME } from '~/graphql/queries/user';
+import { POSTS } from '~/graphql/queries/post';
 
 const { gqlRequest } = useGqlClient()
 const { me, setMe } = useMe()
 const showModal = ref<boolean>(false)
+const posts = ref<PostSummary[]>()
 
-onMounted(async () => {
-    await fetchMe()
-})
 
 const fetchMe = async () => {
     try {
@@ -52,33 +52,17 @@ const fetchMe = async () => {
     }
 }
 
-const posts: Post[] = [
-     {
-        id:1,
-        user_id:1,
-        name: '山田太郎',
-        email: 'your@example.com',
-        title: "title",
-        content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        created_at: "now",
-    },
-    {
-        id:2,
-        user_id:2,
-        name: '山田太郎',
-        email: 'your@example.com',
-        title: "title",
-        content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        created_at: "now",
-    },
-    {
-        id:3,
-        user_id:3,
-        name: '山田太郎',
-        email: 'your@example.com',
-        title: "title",
-        content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        created_at: "now",
-    },
-]
+const fetchPosts = async () => {
+    try {
+        const postsResponse = await gqlRequest<PostsResponse>(POSTS)
+
+        posts.value = postsResponse.posts
+    } catch (e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
+onMounted(async () => {
+    await Promise.all([fetchMe(), fetchPosts()])
+})
 </script>

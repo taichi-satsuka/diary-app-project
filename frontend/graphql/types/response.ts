@@ -1,3 +1,5 @@
+import Id from "~/pages/posts/[id].vue";
+
 interface BaseResponse {
     success: boolean,
     message: string,
@@ -29,20 +31,34 @@ export type UserResponse = {
         bio: string | null,
         profile_image_url: string | null,
         created_at: string,
-        posts?: Post[],
+        posts?: PostSummary[],
         followings?: UserSummary[],
         followers?: UserSummary[],
-        likedPosts?: Post[],
+        likedPosts?: PostSummary[],
     }
 }
 
-export type Post = {
-  id: number;
-  title: string;
-  content: string;
-  created_at: string;
-  updated_at: string;
+export type PostDetail = {
+    id: number
+    title: string
+    content: string
+    created_at: string
+    user: UserSummary
 };
+
+export type PostResponse = {
+    post: PostDetail
+}
+
+export interface PostSummary {
+    id: number,
+    title: string,
+    user: UserSummary
+}
+
+export type PostsResponse = {
+    posts: PostSummary[]
+}
 
 export type Comment = {
   id: number;

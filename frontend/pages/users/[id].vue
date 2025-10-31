@@ -54,11 +54,11 @@
                 <button class="flex-1 font-bold hover:underline hover:text-gray-700 transition">User's Diary</button>
                 <button class="flex-1 font-bold border-l-2 border-teal-400 hover:underline hover:text-gray-700 transition">Like</button>
             </div>
-            <PostCard 
+            <!-- <PostCard 
             v-for="(post, index) in posts"
             :key="index"
             :post="post"
-            />
+            /> -->
         </div>
     </div>
     <Loading v-else class="mainBox flex justify-center items-center"/>
@@ -75,7 +75,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Post } from '~/types/type'
 import { USERDETAIL } from '~/graphql/queries/user'
 import { TOGGLEFOLLOW  } from '~/graphql/mutations/toggleFollow'
 import type { ToggleFollowResponse, UserResponse, UserSummary } from '~/graphql/types/response'
@@ -142,15 +141,4 @@ onMounted(async () => {
 
 })
 
-const posts: Post[] = [
-     {
-        id:1,
-        user_id:1,
-        name: '山田太郎',
-        email: 'your@example.com',
-        title: "title",
-        content: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        created_at: "now",
-    },
-]
 </script>
