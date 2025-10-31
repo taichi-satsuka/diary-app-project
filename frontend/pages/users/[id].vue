@@ -15,7 +15,18 @@
                     <p class="text-gray-400 text-sm">Joined: {{ userData!.created_at }}</p>
                 </div>
 
+                <!-- 編集ボタン（ログイン中ユーザーのみ表示） -->
                 <button v-if="Number(id) == me!.id" type="button" class="absolute top-0 right-0 text-md text-white bg-teal-400 hover:bg-teal-500 p-1 rounded-md shadow-lg w-20">edit</button>
+
+                <!-- ✅ フォロー／アンフォローボタン（本人以外に表示） -->
+                <button
+                    v-else
+                    @click="toggleFollow"
+                    class="absolute top-0 right-0 text-md text-white p-1 rounded-md shadow-lg w-24 transition"
+                    :class="isFollowing ? 'bg-gray-400 hover:bg-gray-500' : 'bg-teal-400 hover:bg-teal-500'"
+                >
+                    {{ isFollowing ? 'Unfollow' : 'Follow' }}
+                </button>
             </div>
 
             <!-- Bio -->
@@ -43,30 +54,49 @@
             <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
         </svg>
         <span class="sr-only">Loading...</span>
-</div>
+    </div>
 
 </template>
 
 <script setup lang="ts">
 import type { Post } from '~/types/type'
 import { USERDETAIL } from '~/graphql/queries/user'
-import type { UserResponse } from '~/graphql/types/response'
+import { TOGGLEFOLLOW  } from '~/graphql/mutations/toggleFollow'
+import type { ToggleFollowResponse, UserResponse, UserSummary } from '~/graphql/types/response'
 
 const route = useRoute()
 const router = useRouter()
-const id = route.params.id
 const { me } = useMe()
 const { gqlRequest } = useGqlClient()
-const variables = {id: id}
+
+const id = route.params.id
 const userData = ref<UserResponse['user']>()
+const isFollowing = ref<boolean>(false)
+const MyfollowingUsers = ref<UserSummary[]>(
+    me.value?.followings ?? []
+);
 
 const fetchUserData = async () => {
     try {
+        const variables = {id: id}
         const userDetailResponse = await gqlRequest<UserResponse>(USERDETAIL, variables)
 
         userData.value = userDetailResponse.user
+
+        isFollowing.value = MyfollowingUsers.value.some(user => Number(user.id) === Number(id))
     } catch (e) {
         console.error("error: ", e)
+    }
+}
+
+const toggleFollow = async () => {
+    try {
+        const variables = {followed_id: id}
+        const toggleFollowResponse = await gqlRequest<ToggleFollowResponse>(TOGGLEFOLLOW, variables)
+
+        isFollowing.value = !isFollowing.value 
+    } catch (e) {
+        console.error("error:", e)
     }
 }
 
@@ -76,7 +106,15 @@ const goBack = () => {
 
 onMounted(async () => {
     await fetchUserData()
+
 })
+
+watchEffect(() => {
+
+    if (userData.value && MyfollowingUsers.value){
+    }
+})
+
 
 
 const posts: Post[] = [
