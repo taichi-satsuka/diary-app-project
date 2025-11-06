@@ -44,7 +44,11 @@ export const USERDETAIL = gql`
             posts {
                 id
                 title
-                content
+                user {
+                    id
+                    name
+                    email
+                }
             }
             followings {
                 id
@@ -61,7 +65,11 @@ export const USERDETAIL = gql`
             likedPosts {
                 id
                 title
-                content
+                user {
+                    id
+                    name
+                    email
+                }
             }
         }
     }

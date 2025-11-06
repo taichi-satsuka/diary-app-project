@@ -12,9 +12,9 @@
             </aside>
 
             <div class="mainBox w-1/3 gap-1 flex overflow-scroll flex-col">
-                <div class="flex p-1 border-2 border-teal-300 gap-1 sticky top-0 backdrop-blur-sm z-10 bg-teal-100/80 shadow-md rounded-md">
-                    <button class="flex-1 font-bold hover:underline hover:text-gray-700 transition">Timeline</button>
-                    <button class="flex-1 font-bold border-l-2 border-teal-400 hover:underline hover:text-gray-700 transition">Like</button>
+                <div class="flex justify-center p-1 border-2 border-teal-300 gap-1 sticky top-0 backdrop-blur-sm z-10 bg-teal-100/80 shadow-md rounded-md">
+
+                    <h2 class="font-bold">TimeLine</h2>
                 </div>
                 <PostCard 
                     v-if="posts"
