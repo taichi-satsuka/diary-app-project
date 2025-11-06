@@ -19,6 +19,10 @@ export type ToggleFollowResponse = {
     toggleFollow: BaseResponse 
 }
 
+export type ToggleLikeResponse = {
+    toggleLike: BaseResponse
+}
+
 export type MeResponse = {
     me: UserResponse['user']
 }
@@ -46,6 +50,7 @@ export type PostDetail = {
     updated_at: string
     visibility: 'PUBLIC' | 'FOLLOWERS'
     user: UserSummary
+    likedByUsers: UserSummary[]
 };
 
 export type PostResponse = {

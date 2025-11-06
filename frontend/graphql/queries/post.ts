@@ -16,6 +16,12 @@ export const POST = gql`
                 email
                 profile_image_url
             }
+            likedByUsers {
+                id
+                name
+                email
+                profile_image_url
+            }
         }
     }
 `
