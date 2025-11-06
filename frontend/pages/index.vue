@@ -24,19 +24,27 @@
                 />
                 <Loading v-else class="mainBox flex justify-center items-center"/>
             </div>
+            <PostModal v-if="showModal" v-model="formInput" @close="handleClose" @submit="createPost"/>
         </div>
-        <PostModal v-if="showModal" :manipulateType="`Create`" @close="showModal=false"/>
 </template>
 
 <script setup lang="ts">
-import { type PostsResponse, type MeResponse, type PostSummary } from '~/graphql/types/response';
+import { type PostsResponse, type MeResponse, type PostSummary, type CreatePostResponse } from '~/graphql/types/response';
 import { ME } from '~/graphql/queries/user';
 import { POSTS } from '~/graphql/queries/post';
+import type { PostInput } from '~/graphql/types/response';
+import { CREATE_POST } from '~/graphql/mutations/post';
 
 const { gqlRequest } = useGqlClient()
 const { me, setMe } = useMe()
 const showModal = ref<boolean>(false)
 const posts = ref<PostSummary[]>()
+
+const formInput = reactive<PostInput>({
+    title: '',
+    content: '',
+    visibility: 'PUBLIC',
+})
 
 
 const fetchMe = async () => {
@@ -59,6 +67,32 @@ const fetchPosts = async () => {
         posts.value = postsResponse.posts
     } catch (e) {
         console.error(`Error: ${e}`)
+    }
+}
+
+const handleClose = () => {
+    // フォームの初期化
+    formInput.title = '',
+    formInput.content ='',
+    formInput.visibility = 'PUBLIC'
+    showModal.value=false
+}
+
+const createPost = async () => {
+    try {
+        const variables = {
+            input: formInput
+        }
+        const createPostResponse = await gqlRequest<CreatePostResponse>(CREATE_POST, variables)
+
+        if (createPostResponse.createPost.success) {
+            await fetchPosts()
+        }
+
+        // フォームの初期化
+        handleClose()
+    } catch (e) {
+        console.error("Error:", e)
     }
 }
 

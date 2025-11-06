@@ -60,6 +60,18 @@ export type PostsResponse = {
     posts: PostSummary[]
 }
 
+export type PostInput = {
+    title: string;
+    content: string;
+    visibility: 'PUBLIC' | 'FOLLOWERS';
+}
+
+export type CreatePostResponse = {
+    createPost: BaseResponse & {
+        post: PostSummary
+    }
+}
+
 export type Comment = {
   id: number;
   body: string;
