@@ -43,6 +43,8 @@ export type PostDetail = {
     title: string
     content: string
     created_at: string
+    updated_at: string
+    visibility: 'PUBLIC' | 'FOLLOWERS'
     user: UserSummary
 };
 
@@ -64,6 +66,12 @@ export type PostInput = {
     title: string;
     content: string;
     visibility: 'PUBLIC' | 'FOLLOWERS';
+}
+
+export type UpdatePostResponse = {
+    updatePost: BaseResponse & {
+        post: PostDetail
+    }
 }
 
 export type CreatePostResponse = {

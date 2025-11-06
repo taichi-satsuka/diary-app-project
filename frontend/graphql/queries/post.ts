@@ -8,6 +8,8 @@ export const POST = gql`
             title
             content
             created_at
+            updated_at
+            visibility
             user {
                 id
                 name
