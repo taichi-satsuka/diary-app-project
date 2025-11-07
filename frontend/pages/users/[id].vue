@@ -79,12 +79,12 @@
             </div>
         </div>
         <Loading v-else class="mainBox flex justify-center items-center"/>
-        <FollowModal
+        <UserShowModal
             v-if="isFollowingModal"
             :userSummaries="userData!.followings!"
             @close="isFollowingModal=false"
         />
-        <FollowModal
+        <UserShowModal
             v-if="isFollowedModal"
             :userSummaries="userData!.followers!"
             @close="isFollowedModal=false"

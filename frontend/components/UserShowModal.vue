@@ -3,6 +3,7 @@
         <div class="bg-teal-300 flex flex-col gap-2 rounded-2xl w-full max-w-md h-full max-h-[500px] overflow-y-auto p-2">
             <UserBox
                 v-for="userSummary in userSummaries"
+                :key="userSummary.id"
                 :user="userSummary"
             />
         </div>

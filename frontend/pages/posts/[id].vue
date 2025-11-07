@@ -12,23 +12,30 @@
                                 <p v-if="post.created_at === post.updated_at" class="text-gray-400 text-sm mt-1">Posted: {{ post.created_at }}</p>
                                 <p v-else class="text-gray-400 text-sm mt-1">Updated: {{ post.updated_at }}</p>
                             </div>
-                            <button v-if='me && me.id === post.user.id' @click='showModal=true' class="w-20 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg">Edit</button>
+                            <button v-if='me && me.id === post.user.id' @click='showEditModal=true' class="w-20 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg">Edit</button>
                             <EditPost
-                                v-if="showModal"
+                                v-if="showEditModal"
                                 v-model="post"
-                                @close="showModal=false"
+                                @close="showEditModal=false"
                                 @submit="updatePost"
                             />
                             <div
-                                v-if="isLiked !== undefined"
                                 class="absolute bottom-0 right-8 flex justify-center items-center gap-2 p-1"
                             >
                                 <LikedButton
                                     :isLiked
-                                    @toggleLike="isLiked=!isLiked"
+                                    @toggleLike="toggleLike"
                                 />
-                                <p>{{ post.likedByUsers.length}}</p>
+                                <p
+                                    @click="showUserModal=true"
+                                    class="hover:text-gray-400"
+                                >{{ post.likedByUsers.length}}</p>
                             </div>
+                            <UserShowModal
+                                v-if="showUserModal"
+                                @close="showUserModal=false"
+                                :userSummaries="post.likedByUsers"
+                            />
                         </div>
 
                         <!-- 投稿内容 -->
@@ -54,40 +61,19 @@ const route = useRoute()
 const router = useRouter()
 const { gqlRequest } = useGqlClient()
 const post_id = route.params.id
-const post = ref<PostDetail>()
-const showModal =ref<boolean>(false)
-const isLiked = computed<boolean>({
-        get: () => post.value?.likedByUsers.some(user => user.id === me.value!.id) ?? false,
-        set: async (newVal: boolean) => {
-            if (!post.value) return
+const showEditModal =ref<boolean>(false)
+const showUserModal = ref<boolean>(false)
 
-            const variables = { post_id }
-            await gqlRequest<ToggleLikeResponse>(TOGGLE_LIKE, variables)
+const { data: post } = await useAsyncData<PostDetail>('post', async () => {
+    const variables = { post_id: post_id}
+    const postResponse = await gqlRequest<PostResponse>(POST, variables)
+    
+    return postResponse.post
+})
 
-            if (newVal) {
-                post.value.likedByUsers.push({
-                    id: me.value!.id,
-                    name: me.value!.name,
-                    email: me.value!.email,
-                    profile_image_url: me.value!.profile_image_url,
-                })
-            } else {
-                post.value.likedByUsers = post.value.likedByUsers.filter(user => user.id !== me.value!.id)
-            }
-        }
-    })
-
-
-const fetchPost = async () => {
-    try {
-        const variables = { post_id: post_id}
-        const postResponse = await gqlRequest<PostResponse>(POST, variables)
-
-        post.value = postResponse.post
-    } catch (e) {
-        console.error(`Error: ${e}`)
-    }
-}
+const isLiked = ref<boolean>(
+    post.value?.likedByUsers.some(user => user.id === me.value!.id) ?? false
+)
 
 const updatePost = async () => {
     try {
@@ -102,21 +88,35 @@ const updatePost = async () => {
         const updatePostResponse = await gqlRequest<UpdatePostResponse>(UPDATE_POST, variables)
 
         post.value = updatePostResponse.updatePost.post
-        showModal.value=false
+        showEditModal.value=false
     } catch (e) {
         console.error(`Error: ${e}`)
     }
 }
 
+const toggleLike = async () => {
+        if (!post.value) return
+
+        const variables = { post_id }
+        await gqlRequest<ToggleLikeResponse>(TOGGLE_LIKE, variables)
+
+        isLiked.value = !isLiked.value
+
+        if (isLiked.value) {
+            post.value.likedByUsers.push({
+                id: me.value!.id,
+                name: me.value!.name,
+                email: me.value!.email,
+                profile_image_url: me.value!.profile_image_url,
+            })
+        } else {
+            post.value.likedByUsers = post.value.likedByUsers.filter(user => user.id !== me.value!.id)
+        }
+    }
+
 const goBack = () => {
     router.back()
 }
-
-onMounted(async () => {
-    console.log(post_id)
-    await fetchPost()
-
-})
 
 
 </script>
