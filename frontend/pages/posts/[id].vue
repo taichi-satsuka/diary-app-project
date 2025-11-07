@@ -23,7 +23,7 @@
                             </div>
                             <EditPost
                                 v-if="showEditModal"
-                                v-model="post"
+                                :post
                                 @close="showEditModal=false"
                                 @submit="updatePost"
                             />
@@ -84,14 +84,14 @@ const isLiked = ref<boolean>(
     post.value?.likedByUsers.some(user => user.id === me.value!.id) ?? false
 )
 
-const updatePost = async () => {
+const updatePost = async (newData: PostDetail) => {
     try {
         const variables = {
             input: {
                 id: post_id,
-                title: post.value!.title,
-                content: post.value!.content,
-                visibility: post.value!.visibility
+                title: newData.title,
+                content: newData.content,
+                visibility: newData.visibility
             }
         }
         const updatePostResponse = await gqlRequest<UpdatePostResponse>(UPDATE_POST, variables)

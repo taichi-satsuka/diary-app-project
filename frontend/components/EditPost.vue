@@ -2,7 +2,7 @@
     <div class="h-full fixed inset-0 flex justify-center items-center backdrop-blur-sm bg-gradient-to-br from-teal-100 to-teal-200 z-50">
         <div class="w-full max-w-md bg-white rounded-2xl p-8">
             <h2 class="text-center font-extrabold text-2xl mb-3">Edit</h2>
-            <form class="space-y-5" @submit.prevent="emit('submit', post!)">
+            <form class="space-y-5" @submit.prevent="emit('submit', updateData!)">
                 <div>
                     <label for="title" class="block text-md mb-1">title</label>
                     <input
@@ -11,7 +11,7 @@
                         id="title"
                         class="px-4 py-3 bg-gray-100 border border-gray-300 shadow-sm rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
                         placeholder="Your title"
-                        v-model="post!.title"
+                        v-model="updateData!.title"
                         required
                     />
                 </div>
@@ -22,7 +22,7 @@
                         id="content"
                         class="px-4 py-3 h-60 bg-gray-100 border border-gray-300 shadow-sm rounded-md w-full shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 transition resize-none"
                         placeholder="Your content"
-                        v-model="post!.content"
+                        v-model="updateData!.content"
                         required
                     ></textarea>
                 </div>
@@ -34,7 +34,7 @@
                             id="followers"
                             class="hidden peer"
                             value="FOLLOWERS"
-                            v-model="post!.visibility"
+                            v-model="updateData!.visibility"
                             required
                         />
                         <label 
@@ -49,7 +49,7 @@
                             id="public"
                             class="hidden peer"
                             value="PUBLIC"
-                            v-model="post!.visibility"
+                            v-model="updateData!.visibility"
                             required
                         />
                         <label 
@@ -77,7 +77,11 @@
 <script setup lang="ts">
 import { type PostDetail } from '~/graphql/types/response';
 
-const post = defineModel<PostDetail>()
+const props = defineProps<{post: PostDetail}>()
+
+// 値のディープコピー
+// スプレッド構文は浅いコピーなので配列の中身は参照のまま
+const updateData = reactive<PostDetail>({ ...JSON.parse(JSON.stringify(props.post)) })
 
 const emit = defineEmits<{
     (e: 'submit', value: PostDetail): void
