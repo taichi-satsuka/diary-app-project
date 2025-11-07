@@ -12,7 +12,15 @@
                                 <p v-if="post.created_at === post.updated_at" class="text-gray-400 text-sm mt-1">Posted: {{ post.created_at }}</p>
                                 <p v-else class="text-gray-400 text-sm mt-1">Updated: {{ post.updated_at }}</p>
                             </div>
-                            <button v-if='me && me.id === post.user.id' @click='showEditModal=true' class="w-20 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg">Edit</button>
+                            <div v-if='me && me.id === post.user.id' class="flex gap-1">
+                                <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
+                                <button v-if='me && me.id === post.user.id' @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
+                                <CheckModal
+                                    v-if="showCheckModal"
+                                    @check='deletePost'
+                                    @cancel="showCheckModal=false"
+                                />
+                            </div>
                             <EditPost
                                 v-if="showEditModal"
                                 v-model="post"
@@ -29,7 +37,7 @@
                                 <p
                                     @click="showUserModal=true"
                                     class="hover:text-gray-400"
-                                >{{ post.likedByUsers.length}}</p>
+                                >{{ post.likedByUsers.length ?? 0}}</p>
                             </div>
                             <UserShowModal
                                 v-if="showUserModal"
@@ -51,10 +59,10 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { UPDATE_POST } from '~/graphql/mutations/post'
+import { DELETE_POST, UPDATE_POST } from '~/graphql/mutations/post'
 import { TOGGLE_LIKE } from '~/graphql/mutations/toggleLike'
 import { POST } from '~/graphql/queries/post'
-import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary } from '~/graphql/types/response'
+import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse } from '~/graphql/types/response'
 
 const { me } = useMe()
 const route = useRoute()
@@ -63,6 +71,7 @@ const { gqlRequest } = useGqlClient()
 const post_id = route.params.id
 const showEditModal =ref<boolean>(false)
 const showUserModal = ref<boolean>(false)
+const showCheckModal = ref<boolean>(false)
 
 const { data: post } = await useAsyncData<PostDetail>('post', async () => {
     const variables = { post_id: post_id}
@@ -114,10 +123,21 @@ const toggleLike = async () => {
         }
     }
 
+const deletePost = async () => {
+    try {
+        const variables = {
+            post_id: post_id
+        }
+        await gqlRequest<DeletePostResponse>(DELETE_POST, variables)
+
+        goBack()
+    } catch(e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
 const goBack = () => {
     router.back()
 }
-
-
 </script>
 

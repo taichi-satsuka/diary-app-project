@@ -34,7 +34,20 @@ export const UPDATE_POST = gql`
                     name
                     email
                 }
+                likedByUsers {
+                    id
+                    name
+                    email
+                }
             }
+        }
+    }
+`
+export const DELETE_POST = gql`
+    mutation DeletePost($post_id: ID!) {
+        deletePost(post_id: $post_id) {
+            success
+            message
         }
     }
 `

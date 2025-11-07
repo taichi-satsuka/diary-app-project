@@ -85,6 +85,10 @@ export type CreatePostResponse = {
     }
 }
 
+export type DeletePostResponse = {
+    deletePost: BaseResponse
+}
+
 export type Comment = {
   id: number;
   body: string;
