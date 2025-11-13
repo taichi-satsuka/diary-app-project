@@ -12,6 +12,9 @@
             <!-- logoutからのレンダリング -->
             <p v-if='showLogoutMessage' class="px-4 py-3 mb-5 w-full bg-teal-300/50 border-4 border-teal-500/70 rounded-md text-gray-700">Successfully logout!</p>
 
+            <!-- logoutからのレンダリング -->
+            <p v-if='showDeleteMeMessage' class="px-4 py-3 mb-5 w-full bg-teal-300/50 border-4 border-teal-500/70 rounded-md text-gray-700">Successfully deleted your account!</p>
+
             <form action="" class="space-y-5 " @submit.prevent="onLogin">
                 <div>
                     <label for="email" class="block text-sm mb-1 ">Your email</label>
@@ -58,6 +61,9 @@ const route = useRoute()
 const showLogoutMessage = ref<boolean>(
     route.query.from === 'logout'
 )
+const showDeleteMeMessage = ref<boolean>(
+    route.query.from === 'deleteMe'
+)
 
 const form = reactive<{email: string, password: string}>({
     email: '',
@@ -78,8 +84,6 @@ const onLogin = async () => {
     try {
         const response = await gqlRequest<LoginResponse>(LOGIN, variables)
         
-        console.log("hellow orld" )
-
         if (response.login.success) {
             successMessage.value = response.login.message
             setToken(response.login.token!)
@@ -99,6 +103,11 @@ onMounted(() => {
     if (showLogoutMessage) {
         setTimeout(() => {
             showLogoutMessage.value = false
+        }, 2000)
+    }
+    if (showDeleteMeMessage) {
+        setTimeout(() => {
+            showDeleteMeMessage.value = false
         }, 2000)
     }
 })

@@ -82,8 +82,13 @@
                             <button
                                 type="button"
                                 class="px-4 py-2 mt-2 w-full text-center rounded-md bg-red-500 shadow-md text-white hover:bg-red-600 hover:shadow-lg font-semibold transition"
-                                @click="isEdit=!isEdit"
+                                @click="showCheckModal=true"
                             >Delete</button>
+                            <CheckModal
+                                v-if="showCheckModal"
+                                @cancel="showCheckModal=false"
+                                @check="deleteMe"
+                            />
                         </div>
                         <div
                             v-else
@@ -107,9 +112,10 @@
 </template>
 
 <script setup lang="ts">
-import { LOGOUT } from '~/graphql/mutations/auth'
+import CheckModal from '~/components/CheckModal.vue'
+import { DELETEME, LOGOUT } from '~/graphql/mutations/auth'
 import { UPDATA_ME } from '~/graphql/mutations/me'
-import { type LogoutResponse, type updataMeResponse,  type UserEditData } from '~/graphql/types/response'
+import { type DeleteUserReseponse, type LogoutResponse, type updataMeResponse,  type UserEditData } from '~/graphql/types/response'
 
 const { gqlRequest } = useGqlClient()
 const router = useRouter()
@@ -120,6 +126,7 @@ const editData = reactive<UserEditData>({
     bio: me.value?.bio || '',
     profile_image_url: me.value?.profile_image_url || '',
 })
+const showCheckModal = ref<boolean>(false)
 
 
 console.log(editData)
@@ -156,6 +163,18 @@ const logout = async () => {
         
         if (logoutResponse.logout.success) {
             navigateTo('/login?from=logout')
+        }
+    } catch (e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
+const deleteMe = async () => {
+    try {
+        const DeleteUserReseponse = await gqlRequest<DeleteUserReseponse>(DELETEME)
+        
+        if (DeleteUserReseponse.deleteMe.success) {
+            navigateTo('/login?from=deleteMe')
         }
     } catch (e) {
         console.error(`Error: ${e}`)

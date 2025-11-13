@@ -32,3 +32,12 @@ export const LOGOUT = gql`
     }
   }
 `
+
+export const DELETEME = gql`
+  mutation deleteMe {
+    deleteMe {
+      success
+      message
+    }
+  }
+`

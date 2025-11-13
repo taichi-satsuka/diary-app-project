@@ -19,6 +19,10 @@ export type LogoutResponse = {
     logout: BaseResponse
 }
 
+export type DeleteUserReseponse = {
+    deleteMe: BaseResponse
+}
+
 export type ToggleFollowResponse = {
     toggleFollow: BaseResponse 
 }
