@@ -15,6 +15,10 @@ export type LoginResponse = {
     };
 }
 
+export type LogoutResponse = {
+    logout: BaseResponse
+}
+
 export type ToggleFollowResponse = {
     toggleFollow: BaseResponse 
 }
@@ -89,6 +93,12 @@ export type DeletePostResponse = {
     deletePost: BaseResponse
 }
 
+export type updataMeResponse = {
+    updateMe: BaseResponse & {
+        user: UserResponse['user']
+    }
+}
+
 export type Comment = {
   id: number;
   body: string;
@@ -104,3 +114,9 @@ export type UserSummary = {
   email: string;
   profile_image_url: string | null;
 };
+
+export type UserEditData = {
+    name: string;
+    bio: string | null;
+    profile_image_url: string | null;
+}

@@ -6,6 +6,8 @@ export const ME = gql`
             id
             name
             email
+            bio
+            profile_image_url
             posts {
                 id
                 title

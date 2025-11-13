@@ -75,6 +75,7 @@ type AuthPayload implements Payload {
 }
 
 input UpdateMeInput {
+    name: String
     bio: String
     profile_image_url: String
 }

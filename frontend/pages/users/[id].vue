@@ -30,7 +30,11 @@
                         </div>
 
                     <!-- 編集ボタン（ログイン中ユーザーのみ表示） -->
-                    <button v-if="Number(id) == me!.id" type="button" class="absolute top-0 right-0 text-sm text-white bg-teal-400 hover:bg-teal-500 p-1 rounded-md shadow-lg w-20">edit</button>
+                    <NuxtLink
+                        v-if="Number(id) == me!.id"
+                        to="/meSetting"
+                        class="absolute top-0 right-0 text-sm text-white bg-teal-400 hover:bg-teal-500 p-1 rounded-md shadow-lg w-20 text-cneter"
+                    >settings</NuxtLink>
 
                     <!-- ✅ フォロー／アンフォローボタン（本人以外に表示） -->
                     <button

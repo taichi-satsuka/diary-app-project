@@ -9,6 +9,9 @@
             <!-- 成功メッセージ表示 -->
             <p v-if='successMessage' class="px-4 py-3 mb-5 w-full bg-teal-300/50 border-4 border-teal-500/70 rounded-md text-gray-700">{{ successMessage }}</p>
 
+            <!-- logoutからのレンダリング -->
+            <p v-if='showLogoutMessage' class="px-4 py-3 mb-5 w-full bg-teal-300/50 border-4 border-teal-500/70 rounded-md text-gray-700">Successfully logout!</p>
+
             <form action="" class="space-y-5 " @submit.prevent="onLogin">
                 <div>
                     <label for="email" class="block text-sm mb-1 ">Your email</label>
@@ -51,6 +54,10 @@ import type { LoginResponse } from '~/graphql/types/response'
 const showPassword = ref<boolean>(false)
 const error = ref<string>('')
 const successMessage = ref<string>('')
+const route = useRoute()
+const showLogoutMessage = ref<boolean>(
+    route.query.from === 'logout'
+)
 
 const form = reactive<{email: string, password: string}>({
     email: '',
@@ -86,6 +93,13 @@ const onLogin = async () => {
     } catch (e) {
         console.error("An error occurred:", e)
     }
-
 }
+
+onMounted(() => {
+    if (showLogoutMessage) {
+        setTimeout(() => {
+            showLogoutMessage.value = false
+        }, 2000)
+    }
+})
 </script>
