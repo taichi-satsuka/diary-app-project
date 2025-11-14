@@ -67,8 +67,9 @@ export type PostResponse = {
 }
 
 export interface PostSummary {
-    id: number,
-    title: string,
+    id: number
+    title: string
+    created_at: string
     user: UserSummary
 }
 
@@ -107,7 +108,7 @@ export type updataMeResponse = {
 export type Comment = {
   id: number;
   content: string;
-  created_at?: string;
+  created_at: string;
   updated_at?: string;
   post_id?: number;
   user: UserSummary

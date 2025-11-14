@@ -9,9 +9,10 @@
             <div class="flex-1 flex flex-col min-w-0">
                 <div class="w-full flex items-center justify-between mb-1">
                     <div class="flex flex-1 flex-wrap items-baseline items-center gap-2">
-                        <span class="text-sm px-2 text-gray-800 font-semibold truncate"><NuxtLink :to="`/users/${postSummary.user.id}`" class="hover:text-teal-400">{{ postSummary.user.name }}</NuxtLink></span>
+                        <NuxtLink :to="`/users/${postSummary.user.id}`" class="hover:text-teal-400 text-sm px-2 text-gray-800 font-semibold truncate">{{ postSummary.user.name }}</NuxtLink>
                         <span class="text-sm px-2 text-gray-400 truncate">{{ postSummary.user.email}}</span>
                     </div>
+                    <span class="text-sm pr-5 text-gray-400 truncate">{{ time }}</span>
                 </div>
                 <h2 class="text-lg font-bold px-2 break-words">{{ postSummary.title}}</h2>
             </div>
@@ -23,7 +24,10 @@
 <script setup lang="ts">
 import { type PostSummary } from '~/graphql/types/response';
 
-defineProps<{
+const { getTime } = useDate()
+const props = defineProps<{
     postSummary: PostSummary
 }>()
+
+const time = getTime(props.postSummary.created_at)
 </script>

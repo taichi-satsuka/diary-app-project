@@ -11,6 +11,7 @@ export const ME = gql`
             posts {
                 id
                 title
+                created_at
                 content
             }
             followings {
@@ -28,6 +29,7 @@ export const ME = gql`
             likedPosts {
                 id
                 title
+                created_at
                 content
             }
         }
@@ -46,6 +48,7 @@ export const USERDETAIL = gql`
             posts {
                 id
                 title
+                created_at
                 user {
                     id
                     name
@@ -67,6 +70,7 @@ export const USERDETAIL = gql`
             likedPosts {
                 id
                 title
+                created_at
                 user {
                     id
                     name

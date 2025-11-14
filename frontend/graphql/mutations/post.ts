@@ -8,6 +8,7 @@ export const CREATE_POST = gql`
             post{
                 id
                 title
+                created_at
                 user {
                     id
                     name

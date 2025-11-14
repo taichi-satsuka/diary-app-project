@@ -8,10 +8,13 @@
             </svg>
         </div>
         <div class="flex-1 flex flex-col min-w-0">
-            <div class="w-full flex items-center justify-between mb-1">
-                <div class="flex flex-1 flex-wrap items-baseline items-center gap-2">
-                    <span class="text-sm px-2 text-gray-800 font-semibold truncate"><NuxtLink :to="`/users/${comment.user.id}`" class="hover:text-teal-400">{{ comment.user.name }}</NuxtLink></span>
-                    <span class="text-sm px-2 text-gray-400 truncate">{{ comment.user.email }}</span>
+            <div class="w-full flex items-center mb-1">
+                <div class="flex flex-1 justify-between items-baseline items-center gap-2">
+                    <div>
+                        <NuxtLink :to="`/users/${comment.user.id}`" class="hover:text-teal-400 text-sm px-2 text-gray-800 font-semibold truncate">{{ comment.user.name }}</NuxtLink>
+                        <span class="text-sm px-2 text-gray-400 truncate">{{ comment.user.email }}</span>
+                    </div>
+                    <span class="text-sm pr-5 text-gray-400 truncate whitespace-nowrap">{{ time }}</span>
                 </div>
             </div>
             <h2 class="text-md px-2 break-words">{{ comment.content }}</h2>
@@ -22,8 +25,11 @@
 <script setup lang="ts">
 import { type Comment } from '~/graphql/types/response';
 
-defineProps<{
+const { getTime } = useDate()
+const props = defineProps<{
     comment: Comment
 }>()
+
+const time = getTime(props.comment.created_at)
 
 </script>

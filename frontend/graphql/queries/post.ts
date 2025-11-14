@@ -42,6 +42,7 @@ export const POSTS = gql`
          posts {
             id
             title
+            created_at
             user {
                 id
                 name
