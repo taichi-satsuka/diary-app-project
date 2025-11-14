@@ -1,68 +1,90 @@
 <template>
     <div>
-        <div v-if='post' class="flex flex-col items-center pt-8">
-                <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-10">
-                    <button @click="goBack" class="text-lg text-teal-400 hover:text-teal-500 mb-2"><< Back</button>
-                    <div class="flex flex-col">
-                        <!-- ヘッダー: 投稿タイトル -->
-                        <div class="flex justify-between items-start mb-6 relative">
-                            <div>
-                                <h1 class="text-3xl font-bold text-gray-800">{{ post.title }}</h1>
-                                <NuxtLink :to="`/users/${post.user.id}`" class="text-gray-500 mt-1 hover:text-teal-400">by {{ post.user.name }} ({{ post.user.email }})</NuxtLink>
-                                <p v-if="post.created_at === post.updated_at" class="text-gray-400 text-sm mt-1">Posted: {{ post.created_at }}</p>
-                                <p v-else class="text-gray-400 text-sm mt-1">Updated: {{ post.updated_at }}</p>
-                            </div>
-                            <div v-if='me && me.id === post.user.id' class="flex gap-1">
-                                <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
-                                <button v-if='me && me.id === post.user.id' @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
-                                <CheckModal
-                                    v-if="showCheckModal"
-                                    @check='deletePost'
-                                    @cancel="showCheckModal=false"
-                                />
-                            </div>
-                            <EditPost
-                                v-if="showEditModal"
-                                :post
-                                @close="showEditModal=false"
-                                @submit="updatePost"
-                            />
-                            <div
-                                class="absolute bottom-0 right-8 flex justify-center items-center gap-2 p-1"
-                            >
-                                <LikedButton
-                                    :isLiked
-                                    @toggleLike="toggleLike"
-                                />
-                                <p
-                                    @click="showUserModal=true"
-                                    class="hover:text-gray-400"
-                                >{{ post.likedByUsers.length ?? 0}}</p>
-                            </div>
-                            <UserShowModal
-                                v-if="showUserModal"
-                                @close="showUserModal=false"
-                                :userSummaries="post.likedByUsers"
+        <div v-if='post' class="flex flex-col items-center pt-8 gap-2">
+            <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-10">
+                <button @click="goBack" class="text-lg text-teal-400 hover:text-teal-500 mb-2"><< Back</button>
+                <div class="flex flex-col">
+                    <!-- ヘッダー: 投稿タイトル -->
+                    <div class="flex justify-between items-start mb-6 relative">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">{{ post.title }}</h1>
+                            <NuxtLink :to="`/users/${post.user.id}`" class="text-gray-500 mt-1 hover:text-teal-400">by {{ post.user.name }} ({{ post.user.email }})</NuxtLink>
+                            <p v-if="post.created_at === post.updated_at" class="text-gray-400 text-sm mt-1">Posted: {{ post.created_at }}</p>
+                            <p v-else class="text-gray-400 text-sm mt-1">Updated: {{ post.updated_at }}</p>
+                        </div>
+                        <div v-if='me && me.id === post.user.id' class="flex gap-1">
+                            <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
+                            <button v-if='me && me.id === post.user.id' @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
+                            <CheckModal
+                                v-if="showCheckModal"
+                                @check='deletePost'
+                                @cancel="showCheckModal=false"
                             />
                         </div>
+                        <EditPost
+                            v-if="showEditModal"
+                            :post
+                            @close="showEditModal=false"
+                            @submit="updatePost"
+                        />
+                        <div
+                            class="absolute bottom-0 right-8 flex justify-center items-center gap-2 p-1"
+                        >
+                            <LikedButton
+                                :isLiked
+                                @toggleLike="toggleLike"
+                            />
+                            <p
+                                @click="showUserModal=true"
+                                class="hover:text-gray-400"
+                            >{{ post.likedByUsers.length ?? 0}}</p>
+                        </div>
+                        <UserShowModal
+                            v-if="showUserModal"
+                            @close="showUserModal=false"
+                            :userSummaries="post.likedByUsers"
+                        />
+                    </div>
 
-                        <!-- 投稿内容 -->
-                        <div class="flex-1 overflow-y-auto max-h-[40vh]">
-                            <p class="text-gray-700 whitespace-pre-wrap break-words">{{ post.content }}</p>
-                        </div>
+                    <!-- 投稿内容 -->
+                    <div class="flex-1 overflow-y-auto max-h-[40vh]">
+                        <p class="text-gray-700 whitespace-pre-wrap break-words">{{ post.content }}</p>
                     </div>
                 </div>
             </div>
-            <Loading v-else class="mainBox flex justify-center items-center"/>
+            
+            <div class="w-full max-w-lg flex overflow-scroll flex-col">
+                <div class="flex justify-between px-4 py-2 border-2 border-teal-300 gap-1 sticky top-0 backdrop-blur-sm z-10 bg-teal-100/80 shadow-md rounded-2xl">
+                    <h2 class="font-bold">Comments</h2>
+                    <button
+                        type="button"
+                        class="text-md bg-teal-300 rounded-2xl shadow-md px-4 hover:bg-teal-400 transition font-bold"
+                        @click="showCreateCommentModal=true"
+                    >+</button>
+                </div>
+                <CommentCard
+                    v-for="comment in post.comments"
+                    :key="comment.id"
+                    :comment
+                />
+            </div>
+            <CommentModal
+                v-if="showCreateCommentModal"
+                @close="showCreateCommentModal=false"
+                @submit="createComment"
+            />
+        </div>
+        <Loading v-else class="mainBox flex justify-center items-center"/>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
+import { CREATE_COMMENT } from '~/graphql/mutations/comment'
 import { DELETE_POST, UPDATE_POST } from '~/graphql/mutations/post'
 import { TOGGLE_LIKE } from '~/graphql/mutations/toggleLike'
 import { POST } from '~/graphql/queries/post'
-import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse } from '~/graphql/types/response'
+import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse, type Comment, type CreateCommentResponse } from '~/graphql/types/response'
 
 const { me } = useMe()
 const route = useRoute()
@@ -72,6 +94,7 @@ const post_id = route.params.id
 const showEditModal =ref<boolean>(false)
 const showUserModal = ref<boolean>(false)
 const showCheckModal = ref<boolean>(false)
+const showCreateCommentModal = ref<boolean>(false)
 
 const { data: post } = await useAsyncData<PostDetail>('post', async () => {
     const variables = { post_id: post_id}
@@ -132,6 +155,26 @@ const deletePost = async () => {
 
         goBack()
     } catch(e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
+const createComment = async (commentInput: string) => {
+    try {
+        const variables = {
+            input: {
+                post_id: post_id,
+                content: commentInput
+            }
+        }
+        
+        const createCommentResponse = await gqlRequest<CreateCommentResponse>(CREATE_COMMENT, variables)
+
+        if (createCommentResponse.createComment.success) {
+            post.value?.comments.push(createCommentResponse.createComment.comment)
+        }
+        showCreateCommentModal.value = false
+    } catch (e) {
         console.error(`Error: ${e}`)
     }
 }

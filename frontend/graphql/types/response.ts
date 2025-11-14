@@ -59,6 +59,7 @@ export type PostDetail = {
     visibility: 'PUBLIC' | 'FOLLOWERS'
     user: UserSummary
     likedByUsers: UserSummary[]
+    comments: Comment[]
 };
 
 export type PostResponse = {
@@ -105,12 +106,18 @@ export type updataMeResponse = {
 
 export type Comment = {
   id: number;
-  body: string;
-  created_at: string;
-  updated_at: string;
-  post_id: number;
-  user_id: number;
+  content: string;
+  created_at?: string;
+  updated_at?: string;
+  post_id?: number;
+  user: UserSummary
 };
+
+export type CreateCommentResponse = {
+    createComment: BaseResponse & {
+        comment: Comment
+    }
+}
 
 export type UserSummary = {
   id: number;

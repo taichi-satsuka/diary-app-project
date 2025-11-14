@@ -22,6 +22,17 @@ export const POST = gql`
                 email
                 profile_image_url
             }
+            comments {
+                id
+                content
+                created_at
+                user {
+                    id
+                    name
+                    email
+                    profile_image_url
+                }
+            }
         }
     }
 `
