@@ -15,13 +15,13 @@ type User {
     created_at: DateTime!
     updated_at: DateTime!
 
-    posts: [Post!]! @hasMany
-    comments: [Comment!]! @hasMany
+    posts: [Post!]! @field(resolver:  "App\\GraphQL\\Queries\\UserResolver@posts")
+    comments: [Comment!]! @hasMany  "App\\GraphQL\\Queries\\UserResolver@likedPosts"
 
     followings: [User!]! @belongsToMany(relation: "followings")
     followers: [User!]! @belongsToMany(relation: "followers")
 
-    likedPosts: [Post!]! @belongsToMany(relation: "likedPosts")
+    likedPosts: [Post!]! @field(resolver: "App\\GraphQL\\Queries\\UserResolver@likedPosts")
 }
 
 type Post {
@@ -34,7 +34,7 @@ type Post {
     updated_at: DateTime!
 
     user: User! @belongsTo
-    comments: [Comment!]! @hasMany
+    comments: [Comment!]! @hasMany @orderBy(column: "created_at", direction: DESC)
     likedByUsers: [User!]! @belongsToMany(relation: "likedByUsers")
 }
 
@@ -75,6 +75,7 @@ type AuthPayload implements Payload {
 }
 
 input UpdateMeInput {
+    name: String
     bio: String
     profile_image_url: String
 }
@@ -143,6 +144,7 @@ type Query {
 extend type Query @guard {
     me: User @auth
     post (id: ID @eq): Post @find
+    posts: [Post!]! @field(resolver: "App\\GraphQL\\Queries\\PostResolver")
 }
 
 type Mutation {

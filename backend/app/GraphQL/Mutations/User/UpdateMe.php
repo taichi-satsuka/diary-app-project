@@ -14,6 +14,11 @@ final readonly class UpdateMe
         $user = Auth::user();
         $updated = false;
 
+        if (isset($input['name']) && $input['name'] !== $user->name) {
+            $user->name = $input['name'];
+            $updated = true;
+        }
+ 
         if (isset($input['bio']) && $input['bio'] !== $user->bio) {
             $user->bio = $input['bio'];
             $updated = true;

@@ -1,17 +1,102 @@
-<script>
-import { request, gql } from 'graphql-request'
+<template>
+        <div class="flex justify-center ">
+            <aside class="w-1/5 mr-2 flex flex-col">
+                <h1 class="text-3xl font-extrabold text-center text-teal-700 mt-4 mb-6 tracking-wide">Home</h1>
 
-const endpoint = "http://localhost/graphql"
+                <UserBox :user='{id:me?.id!, name: me?.name!, email:me?.email!, profile_image_url: me?.profile_image_url!}' class="mb-2"/>
 
-const query = gql`
-    {
-        user(id: 2) {
-            id
-            name
-            email
+                <button
+                class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition"
+                @click="showModal=true"
+                >Create Diary</button>
+            </aside>
+
+            <div class="mainBox w-1/3 gap-1 flex overflow-scroll flex-col">
+                <div class="flex justify-center p-1 border-2 border-teal-300 gap-1 sticky top-0 backdrop-blur-sm z-10 bg-teal-100/80 shadow-md rounded-md">
+
+                    <h2 class="font-bold">TimeLine</h2>
+                </div>
+                <PostCard 
+                    v-if="posts"
+                    v-for="postSummary in posts"
+                    :key="postSummary.id"
+                    :postSummary
+                />
+                <Loading v-else class="mainBox flex justify-center items-center"/>
+            </div>
+            <PostModal v-if="showModal" v-model="formInput" @close="handleClose" @submit="createPost"/>
+        </div>
+</template>
+
+<script setup lang="ts">
+import { type PostsResponse, type MeResponse, type PostSummary, type CreatePostResponse } from '~/graphql/types/response';
+import { ME } from '~/graphql/queries/user';
+import { POSTS } from '~/graphql/queries/post';
+import type { PostInput } from '~/graphql/types/response';
+import { CREATE_POST } from '~/graphql/mutations/post';
+
+const { gqlRequest } = useGqlClient()
+const { me, setMe } = useMe()
+const showModal = ref<boolean>(false)
+const posts = ref<PostSummary[]>()
+
+const formInput = reactive<PostInput>({
+    title: '',
+    content: '',
+    visibility: 'PUBLIC',
+})
+
+
+const fetchMe = async () => {
+    try {
+        const meResponse = await gqlRequest<MeResponse>(ME)
+
+        if (meResponse?.me) {
+            setMe(meResponse.me)
         }
-    }
-`
 
-request(endpoint, query).then((data) => console.log(data))
+    } catch (e){
+        console.error(`Error: ${e}`)
+    }
+}
+
+const fetchPosts = async () => {
+    try {
+        const postsResponse = await gqlRequest<PostsResponse>(POSTS)
+
+        posts.value = postsResponse.posts
+    } catch (e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
+const handleClose = () => {
+    // フォームの初期化
+    formInput.title = '',
+    formInput.content ='',
+    formInput.visibility = 'PUBLIC'
+    showModal.value=false
+}
+
+const createPost = async () => {
+    try {
+        const variables = {
+            input: formInput
+        }
+        const createPostResponse = await gqlRequest<CreatePostResponse>(CREATE_POST, variables)
+
+        if (createPostResponse.createPost.success) {
+            await fetchPosts()
+        }
+
+        // フォームの初期化
+        handleClose()
+    } catch (e) {
+        console.error("Error:", e)
+    }
+}
+
+onMounted(async () => {
+    await Promise.all([fetchMe(), fetchPosts()])
+})
 </script>
