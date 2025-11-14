@@ -1,43 +1,37 @@
 <template>
     <div>
-        <div v-if='post' class="flex flex-col items-center pt-8 gap-2">
-            <div class="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-10">
-                <button @click="goBack" class="text-lg text-teal-400 hover:text-teal-500 mb-2"><< Back</button>
-                <div class="flex flex-col">
+        <div v-if='post' class="mainBox flex flex-col items-center pt-8 gap-2">
+            <div class="w-full h-1/2 max-w-lg bg-white rounded-2xl shadow-2xl px-10 pt-5 pb-2">
+                <button @click="goBack" class="text-lg text-teal-400 hover:text-teal-500 mb-1"><< Back</button>
+                <div class="h-5/6 flex flex-col">
                     <!-- ヘッダー: 投稿タイトル -->
-                    <div class="flex justify-between items-start mb-6 relative">
+                    <div class="h-20 flex justify-between items-start mb-6">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-800">{{ post.title }}</h1>
                             <NuxtLink :to="`/users/${post.user.id}`" class="text-gray-500 mt-1 hover:text-teal-400">by {{ post.user.name }} ({{ post.user.email }})</NuxtLink>
                             <p v-if="post.created_at === post.updated_at" class="text-gray-400 text-sm mt-1">Posted: {{ post.created_at }}</p>
                             <p v-else class="text-gray-400 text-sm mt-1">Updated: {{ post.updated_at }}</p>
                         </div>
-                        <div v-if='me && me.id === post.user.id' class="flex gap-1">
-                            <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
-                            <button v-if='me && me.id === post.user.id' @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
-                            <CheckModal
-                                v-if="showCheckModal"
-                                @check='deletePost'
-                                @cancel="showCheckModal=false"
-                            />
-                        </div>
-                        <EditPost
-                            v-if="showEditModal"
-                            :post
-                            @close="showEditModal=false"
-                            @submit="updatePost"
-                        />
-                        <div
-                            class="absolute bottom-0 right-8 flex justify-center items-center gap-2 p-1"
-                        >
-                            <LikedButton
-                                :isLiked
-                                @toggleLike="toggleLike"
-                            />
-                            <p
-                                @click="showUserModal=true"
-                                class="hover:text-gray-400"
-                            >{{ post.likedByUsers.length ?? 0}}</p>
+                        <div class="h-full flex flex-col justify-between">
+                            <div v-if='me && me.id === post.user.id' class="flex gap-1">
+                                <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
+                                <button @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
+                            </div>
+                            <div
+                                v-else
+                                class="h-24"></div>
+                            <div
+                                class="flex justify-center items-center gap-2 p-1"
+                            >
+                                <LikedButton
+                                    :isLiked
+                                    @toggleLike="toggleLike"
+                                />
+                                <p
+                                    @click="showUserModal=true"
+                                    class="hover:text-gray-400"
+                                >{{ post.likedByUsers.length ?? 0}}</p>
+                            </div>
                         </div>
                         <UserShowModal
                             v-if="showUserModal"
@@ -47,13 +41,13 @@
                     </div>
 
                     <!-- 投稿内容 -->
-                    <div class="flex-1 overflow-y-auto max-h-[40vh]">
+                    <div class="2/3 overflow-y-auto">
                         <p class="text-gray-700 whitespace-pre-wrap break-words">{{ post.content }}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="w-full max-w-lg flex overflow-scroll flex-col">
+            <div class="w-full max-w-lg flex-1 flex overflow-y-auto flex-col">
                 <div class="flex justify-between px-4 py-2 border-2 border-teal-300 gap-1 sticky top-0 backdrop-blur-sm z-10 bg-teal-100/80 shadow-md rounded-2xl">
                     <h2 class="font-bold">Comments</h2>
                     <button
@@ -68,13 +62,24 @@
                     :comment
                 />
             </div>
-            <CommentModal
-                v-if="showCreateCommentModal"
-                @close="showCreateCommentModal=false"
-                @submit="createComment"
+            <EditPost
+                v-if="showEditModal"
+                :post
+                @close="showEditModal=false"
+                @submit="updatePost"
             />
         </div>
         <Loading v-else class="mainBox flex justify-center items-center"/>
+        <CheckModal
+            v-if="showCheckModal"
+            @check='deletePost'
+            @cancel="showCheckModal=false"
+        />
+        <CommentModal
+            v-if="showCreateCommentModal"
+            @close="showCreateCommentModal=false"
+            @submit="createComment"
+        />
     </div>
 </template>
 

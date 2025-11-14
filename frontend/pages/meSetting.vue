@@ -60,10 +60,11 @@
                                 v-model="editData.bio"
                                 class="h-32 px-4 py-3 bg-gray-100 border border-gray-300 shadow-sm rounded-md w-full focus:outline-none focus:ring-2 focus:ring-teal-400 transition resize-none"
                             >{{editData.bio}}</textarea>
-                            <p
-                                v-else
-                                class="h-32 px-4 py-3 rounded-md w-full text-md font-semibold break-words"
-                            >{{editData.bio}}</p>
+                            <div v-else class="h-32 overflow-y-auto">
+                                <p
+                                    class="px-4 py-3 rounded-md w-full text-md font-semibold break-words whitespace-pre-wrap"
+                                >{{editData.bio}}</p>
+                            </div>
                         </div>
                         <div
                             v-if="!isEdit"
@@ -127,10 +128,6 @@ const editData = reactive<UserEditData>({
     profile_image_url: me.value?.profile_image_url || '',
 })
 const showCheckModal = ref<boolean>(false)
-
-
-console.log(editData)
-console.log(me.value!.bio)
 
 const handleCancel = () => {
     isEdit.value = false
