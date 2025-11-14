@@ -120,6 +120,10 @@ export type CreateCommentResponse = {
     }
 }
 
+export type DeleteCommentResponse = {
+    deleteComment: BaseResponse 
+}
+
 export type UserSummary = {
   id: number;
   name: string;

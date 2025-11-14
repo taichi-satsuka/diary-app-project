@@ -19,3 +19,11 @@ export const CREATE_COMMENT = gql`
     }
   }
 `
+export const DELETE_COMMENT = gql`
+  mutation deleteComment($comment_id: ID!) {
+    deleteComment(comment_id: $comment_id) {
+      success
+      message
+    }
+  }
+`

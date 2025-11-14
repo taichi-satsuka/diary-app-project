@@ -14,8 +14,8 @@
                         </div>
                         <div class="h-full flex flex-col justify-between">
                             <div v-if='me && me.id === post.user.id' class="flex gap-1">
-                                <button  @click='showEditModal=true' class="w-14 bg-teal-300 hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
-                                <button @click='showCheckModal=true' class="w-14 bg-red-300 hover:bg-red-400 p-1 rounded-md shadow-lg font-semibold">delete</button>
+                                <button  @click='showEditModal=true' class="w-14 bg-teal-300 text-white hover:bg-teal-400 p-1 rounded-md shadow-lg font-semibold">Edit</button>
+                                <button @click='showCheckModal=true' class="w-14 bg-red-400 text-white hover:bg-red-500 p-1 rounded-md shadow-lg font-semibold">delete</button>
                             </div>
                             <div
                                 v-else
@@ -60,6 +60,7 @@
                     v-for="comment in post.comments"
                     :key="comment.id"
                     :comment
+                    @delete="deleteComment"
                 />
             </div>
             <EditPost
@@ -85,11 +86,11 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { CREATE_COMMENT } from '~/graphql/mutations/comment'
+import { CREATE_COMMENT, DELETE_COMMENT } from '~/graphql/mutations/comment'
 import { DELETE_POST, UPDATE_POST } from '~/graphql/mutations/post'
 import { TOGGLE_LIKE } from '~/graphql/mutations/toggleLike'
 import { POST } from '~/graphql/queries/post'
-import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse, type Comment, type CreateCommentResponse } from '~/graphql/types/response'
+import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse, type Comment, type CreateCommentResponse, type DeleteCommentResponse } from '~/graphql/types/response'
 
 const { me } = useMe()
 const route = useRoute()
@@ -183,6 +184,23 @@ const createComment = async (commentInput: string) => {
         console.error(`Error: ${e}`)
     }
 }
+
+const deleteComment = async (delete_comment_id: number) => {
+    try {
+        const variables = {
+            comment_id: delete_comment_id
+        }
+        
+        const deleteCommentResponse = await gqlRequest<DeleteCommentResponse>(DELETE_COMMENT, variables)
+
+        if (deleteCommentResponse.deleteComment.success) {
+            post.value!.comments = (post.value?.comments ?? []).filter(comment => comment.id !== delete_comment_id)
+        }
+    } catch (e) {
+        console.error(`Error: ${e}`)
+    }
+}
+
 
 const goBack = () => {
     router.back()
