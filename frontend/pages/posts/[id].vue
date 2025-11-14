@@ -102,11 +102,14 @@ const showUserModal = ref<boolean>(false)
 const showCheckModal = ref<boolean>(false)
 const showCreateCommentModal = ref<boolean>(false)
 
-const { data: post } = await useAsyncData<PostDetail>(`post-${post_id}`, async () => {
+const { data: post } = await useAsyncData<PostDetail>(`post-${post_id}-${Date.now()}`, async () => {
     const variables = { post_id: post_id}
     const postResponse = await gqlRequest<PostResponse>(POST, variables)
     
     return postResponse.post
+}, {
+    server: true,
+    lazy: false,
 })
 
 const isLiked = ref<boolean>(

@@ -87,7 +87,7 @@
                             <CheckModal
                                 v-if="showCheckModal"
                                 @cancel="showCheckModal=false"
-                                @check="deleteMe"
+                                @check="deleteMyAccount"
                             />
                         </div>
                         <div
@@ -119,7 +119,8 @@ import { type DeleteUserReseponse, type LogoutResponse, type updataMeResponse,  
 
 const { gqlRequest } = useGqlClient()
 const router = useRouter()
-const { me, setMe } = useMe()
+const { me, setMe, deleteMe } = useMe()
+const { deleteToken } = useAuth()
 const isEdit = ref<boolean>(false)
 const editData = reactive<UserEditData>({
     name: me.value?.name || '',
@@ -158,6 +159,8 @@ const logout = async () => {
         const logoutResponse = await gqlRequest<LogoutResponse>(LOGOUT)
         
         if (logoutResponse.logout.success) {
+            deleteMe()
+            deleteToken()
             navigateTo('/login?from=logout')
         }
     } catch (e) {
@@ -165,11 +168,13 @@ const logout = async () => {
     }
 }
 
-const deleteMe = async () => {
+const deleteMyAccount = async () => {
     try {
         const DeleteUserReseponse = await gqlRequest<DeleteUserReseponse>(DELETEME)
         
         if (DeleteUserReseponse.deleteMe.success) {
+            deleteMe()
+            deleteToken()
             navigateTo('/login?from=deleteMe')
         }
     } catch (e) {
