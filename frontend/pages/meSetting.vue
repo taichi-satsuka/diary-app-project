@@ -16,16 +16,15 @@
                             </div>
                             <div class="flex-1">
                                 <label for="profie_image_url" class="block text-sm mb-1 ">profile image</label>
-                                <input
+                                <!-- <input
                                     v-if="isEdit"
                                     type="text"
                                     name="profile_image_url"
                                     id="profile_image_url"
                                     v-model="editData.profile_image_url"
                                     class="px-4 py-3 bg-gray-100 border border-gray-300 shadow-sm rounded-md w-full focus:outline-none focus:ring-2 focus:ring-teal-400 transition"
-                                />
+                                /> -->
                                 <p
-                                    v-else
                                     class="px-4 py-3 rounded-md w-full text-md font-semibold"
                                 >{{editData.profile_image_url}}</p>
                             </div>

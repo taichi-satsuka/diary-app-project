@@ -1,5 +1,8 @@
 export const useAuth = () => {
-    const token = useState<string | null>('auth_token', () => null)
+    const token = useCookie<string | null>('auth_token', {
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24
+    })
 
     const setToken = (newToken: string) => {
         token.value = newToken

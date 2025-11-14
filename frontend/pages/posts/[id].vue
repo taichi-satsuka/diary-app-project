@@ -90,7 +90,7 @@ import { CREATE_COMMENT, DELETE_COMMENT } from '~/graphql/mutations/comment'
 import { DELETE_POST, UPDATE_POST } from '~/graphql/mutations/post'
 import { TOGGLE_LIKE } from '~/graphql/mutations/toggleLike'
 import { POST } from '~/graphql/queries/post'
-import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type UserSummary, type DeletePostResponse, type Comment, type CreateCommentResponse, type DeleteCommentResponse } from '~/graphql/types/response'
+import { type PostResponse, type PostDetail, type UpdatePostResponse, type ToggleLikeResponse, type DeletePostResponse, type CreateCommentResponse, type DeleteCommentResponse } from '~/graphql/types/response'
 
 const { me } = useMe()
 const route = useRoute()
@@ -102,7 +102,7 @@ const showUserModal = ref<boolean>(false)
 const showCheckModal = ref<boolean>(false)
 const showCreateCommentModal = ref<boolean>(false)
 
-const { data: post } = await useAsyncData<PostDetail>('post', async () => {
+const { data: post } = await useAsyncData<PostDetail>(`post-${post_id}`, async () => {
     const variables = { post_id: post_id}
     const postResponse = await gqlRequest<PostResponse>(POST, variables)
     
@@ -125,7 +125,7 @@ const updatePost = async (newData: PostDetail) => {
         }
         const updatePostResponse = await gqlRequest<UpdatePostResponse>(UPDATE_POST, variables)
 
-        post.value = updatePostResponse.updatePost.post
+        post.value = {...updatePostResponse.updatePost.post}
         showEditModal.value=false
     } catch (e) {
         console.error(`Error: ${e}`)
