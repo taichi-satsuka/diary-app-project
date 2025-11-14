@@ -34,7 +34,7 @@ type Post {
     updated_at: DateTime!
 
     user: User! @belongsTo
-    comments: [Comment!]! @hasMany
+    comments: [Comment!]! @hasMany @orderBy(column: "created_at", direction: DESC)
     likedByUsers: [User!]! @belongsToMany(relation: "likedByUsers")
 }
 

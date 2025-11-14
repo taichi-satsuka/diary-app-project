@@ -171,7 +171,7 @@ const createComment = async (commentInput: string) => {
         const createCommentResponse = await gqlRequest<CreateCommentResponse>(CREATE_COMMENT, variables)
 
         if (createCommentResponse.createComment.success) {
-            post.value?.comments.push(createCommentResponse.createComment.comment)
+            post.value?.comments.unshift(createCommentResponse.createComment.comment)
         }
         showCreateCommentModal.value = false
     } catch (e) {
