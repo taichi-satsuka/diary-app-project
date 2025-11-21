@@ -1,0 +1,27 @@
+# ビルドステージ
+FROM node:20-alpine AS build
+
+WORKDIR /var/www/frontend
+
+# パッケージインストール
+COPY frontend/package*.json ./
+RUN npm ci
+
+# アプリケーションコードをコピーしてビルド
+COPY frontend/ ./
+RUN npm run build
+
+
+# 本番ステージ
+FROM node:20-alpine
+
+WORKDIR /var/www/frontend
+
+# ビルド済みファイルをコピー
+COPY --from=build /var/www/frontend/.output ./.output
+
+# もし Nuxt3 ならサーバ起動用
+CMD ["node", ".output/server/index.mjs"]
+
+# ポート公開
+EXPOSE 3000

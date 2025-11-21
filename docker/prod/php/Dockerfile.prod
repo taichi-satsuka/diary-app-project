@@ -1,0 +1,48 @@
+# -------------------------
+# ビルドステージ
+# -------------------------
+FROM php:8.2-fpm AS build
+
+WORKDIR /var/www/backend
+
+# Composer のコピー
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# PHP 拡張モジュールのインストール
+RUN apt-get update \
+    && apt-get install -y zlib1g-dev libzip-dev mariadb-client \
+    && docker-php-ext-install zip pdo_mysql \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Composer 依存関係のみインストール（dev を除く）
+COPY backend/ ./
+RUN composer install --no-dev --optimize-autoloader --prefer-dist
+
+
+# -------------------------
+# 本番ステージ
+# -------------------------
+FROM php:8.2-fpm
+
+WORKDIR /var/www/backend
+
+# PHP 設定ファイルのコピー
+COPY docker/php/php.ini /usr/local/etc/php/
+
+# ビルドステージから vendor をコピー
+COPY --from=build /var/www/backend/vendor ./vendor
+
+# アプリケーションコードをコピー
+COPY backend/ /var/www/backend/
+
+
+# 権限設定
+RUN chown -R www-data:www-data /var/www/backend \
+    && chmod -R 755 /var/www/backend
+
+# PHP-FPM ポート
+EXPOSE 9000
+
+# コンテナ起動
+CMD ["php-fpm"]
