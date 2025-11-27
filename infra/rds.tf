@@ -4,9 +4,9 @@ resource "aws_db_instance" "diary_app_rds" {
   engine_version         = "8.0"
   instance_class         = "db.t3.micro"
   allocated_storage      = 20
-  username               = "app"       # docker-composeのMYSQL_USER
-  password               = "secret123"    # docker-composeのMYSQL_PASSWORD
-  db_name                = "diary_app" # docker-composeのMYSQL_DATABASE
+  username               = var.db_username
+  password               = var.db_password
+  db_name                = var.db_database
   parameter_group_name   = aws_db_parameter_group.app_rds_params.name
   multi_az               = false
   publicly_accessible    = false

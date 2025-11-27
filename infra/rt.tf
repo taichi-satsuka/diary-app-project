@@ -15,3 +15,17 @@ resource "aws_route_table_association" "app_public_rt_assoc_1a" {
   subnet_id      = aws_subnet.app_public_subnet_1a.id
   route_table_id = aws_route_table.app_public_rt.id
 }
+
+resource "aws_route_table" "app_private_rt" {
+  vpc_id = aws_vpc.diary_app_vpc.id
+
+  tags = {
+    Name = "diary-app-private-rt"
+  }
+}
+
+# Private Subnet にルートテーブルを関連付け
+resource "aws_route_table_association" "app_private_rt_association" {
+  subnet_id      = aws_subnet.app_private_subnet_1a.id
+  route_table_id = aws_route_table.app_private_rt.id
+}

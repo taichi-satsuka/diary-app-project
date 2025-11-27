@@ -61,7 +61,7 @@ resource "aws_subnet" "app_private_subnet_1d" {
 resource "aws_db_subnet_group" "app_db_subnet" {
   name        = "app-db-subnet-group"
   description = "Subnet group for diary app RDS"
-  subnet_ids  = [
+  subnet_ids = [
     aws_subnet.app_private_subnet_1c.id,
     aws_subnet.app_private_subnet_1d.id
   ]

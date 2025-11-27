@@ -70,3 +70,23 @@ resource "aws_security_group" "sg_rds" {
     Name = "sg_rds"
   }
 }
+
+resource "aws_security_group" "sg_vpc_endpoint" {
+  name        = "sg_vpc_endpoint"
+  description = "Allow ECS tasks to communicate with VPC endpoints"
+  vpc_id      = aws_vpc.diary_app_vpc.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.diary_app_vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
