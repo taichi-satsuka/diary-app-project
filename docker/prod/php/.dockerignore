@@ -1,0 +1,10 @@
+# 環境設定ファイル
+.env
+
+# php のキャッシュ
+storage/cache/
+var/cache/
+
+# log file 
+*.log
+storage/logs/

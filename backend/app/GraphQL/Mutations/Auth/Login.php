@@ -47,7 +47,7 @@ final readonly class Login
         }
 
         // ログイン中はトークンを発行しない（二重ログインを防ぐ）
-        if (PersonalAccessToken::where('tokenable_id', $user->id)) {
+        if (PersonalAccessToken::where('tokenable_id', $user->id)->first()) {
             return (new Response(
                 success: false,
                 message: "You already have logined.",
