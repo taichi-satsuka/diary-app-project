@@ -97,12 +97,15 @@ resource "aws_ecs_task_definition" "diary_app_task_definition" {
     },
     {
       name      = "nuxt-app-prod"
-      image     = "890942158228.dkr.ecr.ap-northeast-1.amazonaws.com/satsuka-diary-app:node-v1.0.0"
+      image     = "890942158228.dkr.ecr.ap-northeast-1.amazonaws.com/satsuka-diary-app:node-v1.0.1"
       essential = true
       portMappings = [{
         containerPort = 3000
         hostPort      = 3000
       }]
+      environment = [
+        { name = "NUXT_PUBLIC_API_BASE", value = "http://${aws_lb.diary-app-lb.dns_name}/graphql" }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
