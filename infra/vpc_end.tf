@@ -56,7 +56,7 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids = [
     aws_route_table.app_private_rt.id,
   ]
-  depends_on = [ aws_route_table.app_private_rt ]
+  depends_on = [aws_route_table.app_private_rt]
 }
 
 # SecretsManagerのvpc endpoint
