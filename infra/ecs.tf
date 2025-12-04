@@ -157,50 +157,6 @@ resource "aws_ecs_task_definition" "diary_app_task_definition" {
   ])
 }
 
-resource "aws_ecs_task_definition" "diary_app_migrate" {
-  family                   = "diary-app-migrate"
-  cpu                      = "256"
-  memory                   = "512"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-
-  runtime_platform {
-    cpu_architecture        = "ARM64"
-    operating_system_family = "LINUX"
-  }
-
-  container_definitions = jsonencode([{
-    name             = "app-php-migrate"
-    image            = "890942158228.dkr.ecr.ap-northeast-1.amazonaws.com/satsuka-diary-app:php-v1.0.0"
-    essential        = true
-    workingDirectory = "/var/www/backend"
-    command          = ["php", "artisan", "migrate", "--force"]
-    environment = [
-      { name = "APP_DEBUG", value = "false" },
-      { name = "APP_ENV", value = "production" },
-      { name = "APP_URL", value = "http://localhost" },
-      { name = "DB_CONNECTION", value = var.db_connection },
-      { name = "DB_HOST", value = aws_db_instance.diary_app_rds.endpoint },
-      { name = "DB_DATABASE", value = var.db_database },
-      { name = "DB_USERNAME", value = var.db_username },
-      { name = "DB_PORT", value = var.db_port },
-    ]
-    secrets = [
-      { name = "DB_PASSWORD", valueFrom = aws_secretsmanager_secret_version.db_password_version.arn },
-      { name = "APP_KEY", valueFrom = aws_secretsmanager_secret_version.app_key_version.arn }
-    ]
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        "awslogs-group"         = "/ecs/diary-app"
-        "awslogs-region"        = "ap-northeast-1"
-        "awslogs-stream-prefix" = "db-migrate"
-      }
-    }
-  }])
-}
-
 resource "aws_ecs_service" "diary_app_service" {
   name                   = "satsuka-diary-app-service"
   cluster                = aws_ecs_cluster.diary_app_cluster.id

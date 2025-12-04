@@ -1,7 +1,8 @@
 # DBのpassword
 resource "aws_secretsmanager_secret" "app_db_password" {
-  name        = "satsuka-diary-app-db-password-v1"
-  description = "Using for RDS in diary-app"
+  name                    = "satsuka-diary-app-db-password-v2"
+  description             = "Using for RDS in diary-app"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "db_password_version" {
@@ -11,8 +12,9 @@ resource "aws_secretsmanager_secret_version" "db_password_version" {
 
 # laravelのapp key
 resource "aws_secretsmanager_secret" "app_key" {
-  name        = "satsuka-diary-app-key-v1"
-  description = "using for laravel app key in diary-app"
+  name                    = "satsuka-diary-app-key-v2"
+  description             = "using for laravel app key in diary-app"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "app_key_version" {
