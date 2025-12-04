@@ -48,22 +48,12 @@ resource "aws_subnet" "app_private_subnet_1c" {
   }
 }
 
-resource "aws_subnet" "app_private_subnet_1d" {
-  vpc_id                  = aws_vpc.diary_app_vpc.id
-  cidr_block              = "192.168.4.0/24"
-  availability_zone       = "ap-northeast-1d"
-  map_public_ip_on_launch = false
-  tags = {
-    Name = "diary-app-private-subnet-1d"
-  }
-}
-
 resource "aws_db_subnet_group" "app_db_subnet" {
   name        = "app-db-subnet-group"
   description = "Subnet group for diary app RDS"
   subnet_ids = [
-    aws_subnet.app_private_subnet_1c.id,
-    aws_subnet.app_private_subnet_1d.id
+    aws_subnet.app_private_subnet_1a.id,
+    aws_subnet.app_private_subnet_1c.id
   ]
 
   tags = {
