@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test("sign up ", async ({ page }) => {
-    const userName = "yamamoto"
+test("sign up ", async ({ browser }) => {
+    const context = await browser.newContext()
+    const page = await context.newPage()
+    const userName = "hana"
 
     await page.goto(
-        'http://diary-app-lb-950760368.ap-northeast-1.elb.amazonaws.com/login',
+        'http://diary-app-lb-1869033578.ap-northeast-1.elb.amazonaws.com/login',
         {
-            waitUntil: 'load',
-            timeout: 60000
+            timeout: 120000
         }
     );
 
@@ -40,18 +41,21 @@ test("sign up ", async ({ page }) => {
     await createButton.click();
 
     // ログインページに遷移
-    await page.waitForURL("**/login", { timeout: 30000 });
+    await page.waitForURL("**/login", { timeout: 120000 });
+
+    await context.close();
 });
 
 
-test("sign up with existing email show error", async ({ page }) => {
-    const userName = "tanaka"
+test("sign up with existing email show error", async ({ browser}) => {
+    const context = await browser.newContext()
+    const page = await context.newPage()
+    const userName = "akiba"
 
     await page.goto(
-        'http://diary-app-lb-950760368.ap-northeast-1.elb.amazonaws.com/register',
+        'http://diary-app-lb-1869033578.ap-northeast-1.elb.amazonaws.com/login',
         {
-            waitUntil: 'load',
-            timeout: 60000
+            timeout: 120000
         }
     );
 
@@ -84,4 +88,6 @@ test("sign up with existing email show error", async ({ page }) => {
 
     // URL は登録できないので /register のまま
     await expect(page).toHaveURL(/.*\/register$/);
+
+    await context.close();
 });

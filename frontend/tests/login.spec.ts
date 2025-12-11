@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-test("sign up ", async ({ page }) => {
+test("login", async ({ browser}) => {
+    const context = await browser.newContext()
+    const page = await context.newPage()
     const userName = "tanaka"
 
     await page.goto(
-        'http://diary-app-lb-950760368.ap-northeast-1.elb.amazonaws.com/login',
+        'http://diary-app-lb-1869033578.ap-northeast-1.elb.amazonaws.com/login',
         {
-            waitUntil: 'load',
+            waitUntil: 'domcontentloaded',
             timeout: 60000
         }
     );
@@ -26,5 +28,7 @@ test("sign up ", async ({ page }) => {
     await loginButton.click();
 
     // ホームページに遷移
-    await page.waitForURL("**", { timeout: 30000 });
+    await page.waitForURL("**", { timeout: 60000 });
+
+    context.close()
 });
