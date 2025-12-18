@@ -4,7 +4,9 @@ import { waitForAttribute, waitForVisible } from './utils/waiter';
 test("sign up ", async ({ browser }) => {
     const context = await browser.newContext()
     const page = await context.newPage()
-    const userName = "akasaka"
+    
+    const randomId = Math.floor(Math.random() * 100000);
+    const userName = `test${randomId}`;
     const url = "http://localhost/login";
 
     await page.goto(url);
@@ -76,7 +78,6 @@ test("sign up with existing email show error", async ({ browser}) => {
 
     // エラーメッセージを検証
     const errorMessage = page.locator('p', { hasText: /email.*already.*taken/i });
-    waitForVisible(errorMessage);
     await expect(errorMessage).toHaveText(/The Email has already been taken/i);
 
     // URL は登録できないので /register のまま
