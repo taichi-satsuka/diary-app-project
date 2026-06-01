@@ -22,6 +22,9 @@ phases:
       # ログ出力・ビルドログで何のコミットをビルドしている確認用
       - echo "Building images with tag commit hash $COMMIT_HASH"
 
+      # ECR Public Gallery経由でベースイメージを取得（Docker Hubレートリミット回避）
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
       # ECRへの認証.
       # get-login-password: 一時トークンを取得
       # docker login にパイプで渡す。これがないと docker push が no basic auth credentials で失敗
