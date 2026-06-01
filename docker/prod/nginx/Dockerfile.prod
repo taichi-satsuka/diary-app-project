@@ -1,4 +1,4 @@
-FROM nginx:stable-alpine
+FROM public.ecr.aws/nginx/nginx:stable-alpine
 
 COPY ./docker/prod/nginx/default.prod.conf /etc/nginx/conf.d/default.conf
 
