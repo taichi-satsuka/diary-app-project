@@ -6,7 +6,7 @@ FROM public.ecr.aws/docker/library/php:8.2-fpm AS build
 WORKDIR /var/www/backend
 
 # Composer のコピー
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=public.ecr.aws/docker/library/composer:latest /usr/bin/composer /usr/bin/composer
 
 # PHP 拡張モジュールのインストール
 RUN apt-get update \
