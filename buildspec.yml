@@ -1,0 +1,61 @@
+version: 0.2
+
+# build中に使う環境変数を定義
+env:
+  # variablesはプレーンテキストで格納. 
+  variables:
+    AWS_ACCOUNT_ID: "890942158228"
+    AWS_DEFAULT_REGION: "ap-northeast-1"
+    ECR_REPO: "890942158228.dkr.ecr.ap-northeast-1.amazonaws.com/mt-satsuka-diary-app" # imageプッシュ先のECRリポジトリURI
+  # シークレットなら
+  # secrets-manager: 
+  # or
+  # parameter-store: 
+
+phases:
+  pre_build:
+    commands:
+      # CODEBUILD_RESOLVED_SOURCE_VERSION: codebuildが自動設定する変数、ソースのフルcommit hash(40文字)
+      # cut -c 1-7: 先頭7文字を取得
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      
+      # ログ出力・ビルドログで何のコミットをビルドしている確認用
+      - echo "Building images with tag commit hash $COMMIT_HASH"
+
+      # ECRへの認証.
+      # get-login-password: 一時トークンを取得
+      # docker login にパイプで渡す。これがないと docker push が no basic auth credentials で失敗
+      # CodeBuildのサービスロールにECR権限が必要
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  build:
+    commands:
+      # nginxのコンテナのイメージをビルド
+      # -t でタグ付け
+      # -f でDockerfileのパスを指定
+      # . ビルドコンテキスト（リポジトリルート）
+      - docker build -t $ECR_REPO:nginx-$COMMIT_HASH -f docker/prod/nginx/Dockerfile.prod .
+
+      # phpのコンテナのイメージをビルド
+      - docker build -t $ECR_REPO:php-$COMMIT_HASH -f docker/prod/php/Dockerfile.prod .
+
+      # nodeのコンテナのイメージをビルド
+      - docker build -t $ECR_REPO:node-$COMMIT_HASH -f docker/prod/node/Dockerfile.prod .
+
+  post_build:
+    commands:
+      # ビルドしたイメージをECRにプッシュ
+      - docker push $ECR_REPO:nginx-$COMMIT_HASH
+      - docker push $ECR_REPO:php-$COMMIT_HASH
+      - docker push $ECR_REPO:node-$COMMIT_HASH
+
+      - printf '[{"name":"satsuka-app-nginx","imageUri":"%s"},{"name":"php-fpm","imageUri":"%s"},{"name":"nuxt-app","imageUri":"%s"}]' "$ECR_REPO:nginx-$COMMIT_HASH" "$ECR_REPO:php-$COMMIT_HASH" "$ECR_REPO:node-$COMMIT_HASH" > imagedefinitions.json
+
+# CodeBuildの出力ファイルを指定
+# 指定したファイルがS3に保存され、Codepipelineの次のステージ(Deploy)に渡される
+# imagedefinitions.jsonがないとECSデプロイステージがどのイメージを使うかわからずに失敗する。
+artifacts:
+  files:
+    - imagedefinitions.json
+
+
